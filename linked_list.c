@@ -14,7 +14,7 @@
 /*
  * we assume that the argument lst is not NULL
  */
-int add(linked_list *lst, void *val){
+int add_LL(linked_list *lst, void *val){
 
 	linked_list *new_next = (linked_list*)malloc(sizeof(linked_list));
 	new_next->value = malloc(sizeof(void));
@@ -55,9 +55,9 @@ void* ecxtract_first(linked_list **lst){
 /*
  * we assume that the argument lst is not NULL
  */
-int for_each(linked_list *lst, int (*func)){
+int for_each_list(linked_list *lst, int (*func)(void* , void* ), void* vd){
 	int as;
-	as = func(lst->value);
+	as = func(lst->value, vd);
 	if(!as) return as;
 	if(lst->next != NULL){
 		return for_each(lst->next);
@@ -89,8 +89,8 @@ linked_list* allocate_list(void *val){
 		return NULL;
 	}
 
-	res->add = add;
-	res->for_each = for_each;
+	res->add = add_LL;
+	res->for_each = for_each_list;
 	res->free = free_LL;
 
 	return res;
