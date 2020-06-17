@@ -30,7 +30,7 @@ int add_to_row(matrix_row *row, double val, int column){
 		}
 		return 1;
 	}
-	as = row->lst->add(row->lst, new_elem);
+	as = row->lst->add(row->lst, (void*)new_elem);
 	if(!as){
 		 free(new_elem);
 		return -1;
@@ -44,7 +44,7 @@ int add_to_row(matrix_row *row, double val, int column){
  * Assuming row != NULL
  */
 int for_each_row(const matrix_row *row,
-		int (*func)(matrix_element*, void*), void* vd){
+		int (*func)(matrix_element* , void* ), void* vd){
 
 	return row->lst->for_each(row->lst, func, vd);
 }
@@ -66,6 +66,10 @@ matrix_row* allocate_row(){
 		free(res);
 		return NULL;
 	}
+	res->lst = NULL;
+	res->add = add_to_row;
+	res->for_each = for_each_row;
+	res->free = free_row;
 	return res;
 }
 

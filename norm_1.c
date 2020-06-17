@@ -15,8 +15,9 @@
 /*
  * this is the function for the for_each
  */
-int add_to_norm(matrix_element *elem, double *column_sums){
-	column_sums[elem->column] += abs(elem->value);
+int add_to_norm(matrix_element *elem, void *column_sums){
+	double *double_sums = (double*)column_sums;
+	double_sums[elem->column] += abs(elem->value);
 	return 1;
 }
 

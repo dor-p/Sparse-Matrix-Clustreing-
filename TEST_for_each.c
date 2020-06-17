@@ -14,9 +14,15 @@
 #include <math.h>
 #include <assert.h>
 
-int print_elem(void* elem, void *vd){
-	printf("%f ", *((double*)elem));
-	*(int*)vd += 1;
+int print_elem(matrix_element* elem, void *vd){
+	printf("%f ", elem->value);
+	/**(int*)vd += 1;*/
+	return 1;
+}
+
+int add_to_norm_t(matrix_element *elem, void *column_sums){
+	double *double_sums = (double*)column_sums;
+	double_sums[elem->column] += abs(elem->value);
 	return 1;
 }
 
@@ -43,19 +49,32 @@ linked_list* get_lst(int n){
 }
 
 int main(){
-	linked_list *lst;
-	int num;
-	lst = get_lst(5);
-	 /*tmp = lst->next;*/
+	int i, j;
+	double *column_sums;
+	matrix_row** mtrx;
+	mtrx = (matrix_row**)malloc(5 * sizeof(matrix_row*));
+	assert(mtrx != NULL);
+	for(i = 0; i < 5; i++){
+		mtrx[i] = allocate_row();
+		for(j = 0; j < 5; j++){
+			mtrx[i]->add(mtrx[i], pow(-1, (double)(i + j)) * (double)(i + j), j);
+		}
+	}
+	column_sums = (double*)malloc(5 * sizeof(double));
+	for(i = 0; i < 5; i++){
+		mtrx[i]->for_each(mtrx[i], add_to_norm_t, column_sums);
+	}
+	printf("matrix:\n");
+	for(i = 0; i < 5; i++){
+		mtrx[i]->for_each(mtrx[i], print_elem, NULL);
+		printf("\n");
+	}
+	printf("column sums:\n");
+	for(i = 0; i < 5; i++){
+		printf("%f ", column_sums[i]);
+	}
 
-	num = 0;
-	lst->for_each(lst, print_elem, &num);
-	/*while(tmp != NULL){
-		printf("%f ", *((double*)(tmp->value)));
-		tmp = tmp->next;
-	}*/
-	printf("%d", num);
-	lst->free(lst);
+
 	return 0;
 }
 
