@@ -46,7 +46,7 @@ int main(){
 	linked_list *lst;
 	int num;
 	lst = get_lst(5);
-	/*tmp = lst->next;*/
+	 /*tmp = lst->next;*/
 
 	num = 0;
 	lst->for_each(lst, print_elem, &num);

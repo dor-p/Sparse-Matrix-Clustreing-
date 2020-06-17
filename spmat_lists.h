@@ -30,6 +30,6 @@ typedef struct _spmat_lists{
 } spmat_lists;
 
 /* Allocates a new linked-lists sparse matrix of size n */
-spmat_lists* spmat_lists_allocate(int n);
+spmat_lists*  spmat_lists_allocate(int n);
 
 #endif /* SPMAT_LISTS_H_ */

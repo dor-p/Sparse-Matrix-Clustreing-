@@ -42,7 +42,7 @@ typedef struct _linked_list {
 /*
  * Allocates a new linked-lists
  */
-linked_list* allocate_list(void *val);
+linked_list* 	allocate_list(void *val);
 
 
 #endif /* LINKED_LIST_H_ */

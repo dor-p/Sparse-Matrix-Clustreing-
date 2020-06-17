@@ -48,6 +48,6 @@ typedef struct _matrix_row {
 /*
  * Allocates a new matrix row
  */
-matrix_row* allocate_row();
+matrix_row* 	allocate_row();
 
 #endif /* MATRIX_ROW_H_ */

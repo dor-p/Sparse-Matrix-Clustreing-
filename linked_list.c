@@ -81,7 +81,7 @@ void free_LL(linked_list *lst){
 linked_list* allocate_list(void *val){
 	linked_list *res = (linked_list*)malloc(sizeof(linked_list));
 	if(res == NULL){
-		free(res);
+		 free(res);
 		return NULL;
 	}
 	res->value = val;

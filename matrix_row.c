@@ -32,7 +32,7 @@ int add_to_row(matrix_row *row, double val, int column){
 	}
 	as = row->lst->add(row->lst, new_elem);
 	if(!as){
-		free(new_elem);
+		 free(new_elem);
 		return -1;
 	}
 
