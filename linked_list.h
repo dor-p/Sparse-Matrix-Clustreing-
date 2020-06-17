@@ -29,7 +29,7 @@ typedef struct _linked_list {
 	/*
 	 * Iterates over the list and and performs func on each value
 	 */
-	int (*for_each)(struct _linked_list *lst, int (*func), void* vd);
+	int (*for_each)(struct _linked_list *lst, int (*func)(), void* vd);
 
 
 	/*

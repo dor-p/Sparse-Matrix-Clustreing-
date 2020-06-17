@@ -8,6 +8,8 @@
 #ifndef MATRIX_ROW_H_
 #define MATRIX_ROW_H_
 
+#include "linked_list.h"
+
 /*
  * node for matrix_row
  */
@@ -33,7 +35,7 @@ typedef struct _matrix_row {
 	/*
 	 * Iterates over the row and and performs func on each value
 	 */
-	int (*for_each)(const struct _matrix_row *row, int (*func), void*);
+	int (*for_each)(const struct _matrix_row *row, int (*func)(), void*);
 
 
 	/*

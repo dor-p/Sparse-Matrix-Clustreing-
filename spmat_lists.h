@@ -8,6 +8,8 @@
 #ifndef SPMAT_LISTS_H_
 #define SPMAT_LISTS_H_
 
+#include "matrix_row.h"
+
 typedef struct _spmat_lists{
 	/* Matrix size (n*n) */
 		int		n;

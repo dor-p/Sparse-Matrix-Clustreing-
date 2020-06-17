@@ -44,9 +44,9 @@ int add_to_row(matrix_row *row, double val, int column){
  * Assuming row != NULL
  */
 int for_each_row(const matrix_row *row,
-		int (*func)(const matrix_element*, void*), void* vd){
+		int (*func)(matrix_element*, void*), void* vd){
 
-	return row->for_each(row->lst, func, vd);
+	return row->lst->for_each(row->lst, func, vd);
 }
 
 /*

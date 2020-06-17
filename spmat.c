@@ -113,11 +113,11 @@ void add_at_start(linkedList *lst, double value, int column){
     lst->next = nxt;
 }
 
-void free_LL(linkedList *lst){
+void free_LL_s(linkedList *lst){
     linkedList* nxt = lst->next;
     free(lst);
     if(nxt != NULL){
-        free_LL(nxt);
+    	free_LL_s(nxt);
     }
 }
 

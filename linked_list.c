@@ -60,7 +60,7 @@ int for_each_list(linked_list *lst, int (*func)(void* , void* ), void* vd){
 	as = func(lst->value, vd);
 	if(!as) return as;
 	if(lst->next != NULL){
-		return for_each(lst->next);
+		return for_each_list(lst->next, func, vd);
 	}
 	return as;
 }
@@ -80,14 +80,12 @@ void free_LL(linked_list *lst){
  */
 linked_list* allocate_list(void *val){
 	linked_list *res = (linked_list*)malloc(sizeof(linked_list));
-	res->value = malloc(sizeof(void));
-	res->next = (linked_list*)malloc(sizeof(linked_list));
-	if(res == NULL || res->value == NULL || res->next == NULL){
+	if(res == NULL){
 		free(res);
-		free(res->value);
-		free(res->next);
 		return NULL;
 	}
+	res->value = val;
+	res->next = NULL;
 
 	res->add = add_LL;
 	res->for_each = for_each_list;
