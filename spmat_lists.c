@@ -14,12 +14,12 @@
 /*
  *
  */
-int add_row_lists(spmat_lists *A, double *row, int i){
+int add_row_linked_lists(spmat_lists *A, double *row, int i){
 	int j, as;
 	A->rows[i] = allocate_row();
 	if(A->rows[i] == NULL){
 		free(A->rows[i]);
-		return -1;
+		return 0;
 	}
 	for(j = A->n - 1; j >= 0; j--){
 		if(row[j] != 0.0){
@@ -81,7 +81,7 @@ spmat_lists*  spmat_lists_allocate(int n){
 	}
 
 	res->n = n;
-	res->add_row = add_row_lists;
+	res->add_row = add_row_linked_lists;
 	res->free = free_spmat_lists;
 	res->mult = multiply_spmat_lists;
 

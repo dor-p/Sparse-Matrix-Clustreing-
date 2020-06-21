@@ -18,7 +18,7 @@
 int add_to_row(matrix_row *row, double val, int column){
 	int as;
 	matrix_element* new_elem = (matrix_element*)malloc(sizeof(matrix_element));
-	if(new_elem == NULL) return -1;
+	if(new_elem == NULL) return 0;
 	new_elem->value = val;
 	new_elem->column = column;
 
@@ -26,14 +26,14 @@ int add_to_row(matrix_row *row, double val, int column){
 		row->lst = allocate_list((void*)new_elem); /*do we need (void*)?*/
 		if(row->lst == NULL){
 			free(new_elem);
-			return -1;
+			return 0;
 		}
 		return 1;
 	}
 	as = row->lst->add(row->lst, (void*)new_elem);
 	if(!as){
 		 free(new_elem);
-		return -1;
+		return 0;
 	}
 
 	return as;

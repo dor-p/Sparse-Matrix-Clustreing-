@@ -23,7 +23,7 @@ int add_LL(linked_list *lst, void *val){
 		free(new_next);
 		free(new_next->value);
 		free(new_next->next);
-		return -1;
+		return 0;
 	}
 
 	new_next->value = lst->value;
