@@ -14,9 +14,10 @@
 #include <math.h>
 #include <assert.h>
 
+/*
 int print_elem(matrix_element* elem, void *vd){
 	printf("%f ", elem->value);
-	/**(int*)vd += 1;*/
+	*(int*)vd += 1;
 	return 1;
 }
 
@@ -46,9 +47,11 @@ linked_list* get_lst(int n){
 	}
 
 	return res;
-}
+}*
+
 
 int main(){
+	*
 	int i, j;
 	double *column_sums;
 	matrix_row** mtrx;
@@ -72,9 +75,8 @@ int main(){
 	printf("column sums:\n");
 	for(i = 0; i < 5; i++){
 		printf("%f ", column_sums[i]);
-	}
+	}*
 
 
 	return 0;
-}
-
+}*/

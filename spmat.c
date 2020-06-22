@@ -161,7 +161,7 @@ void free_LL_mat (struct _spmat *A){
 	n = A->n;
     for(i = 0; i < n; i++){
     	if(rows[i] != NULL){
-    		free_LL(rows[i]);
+    		free_LL_s(rows[i]);
     	}
     }
     free(rows);
