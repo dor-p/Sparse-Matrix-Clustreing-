@@ -17,7 +17,7 @@
 int add_LL(linked_list *lst, void *val){
 
 	linked_list *new_next = (linked_list*)malloc(sizeof(linked_list));
-	new_next->value = malloc(sizeof(void));
+	new_next->value = malloc(sizeof(val));
 	new_next->next = (linked_list*)malloc(sizeof(linked_list));
 	if(new_next == NULL || new_next->value == NULL || new_next->next == NULL){
 		free(new_next);

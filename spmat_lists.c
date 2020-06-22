@@ -14,7 +14,7 @@
 /*
  *
  */
-int add_row_linked_lists(spmat_lists *A, double *row, int i){
+int add_row_linked_lists(spmat_lists *A, const double *row, int i){
 	int j, as;
 	A->rows[i] = allocate_row();
 	if(A->rows[i] == NULL){
@@ -47,7 +47,7 @@ void free_spmat_lists(spmat_lists *A){
 /*
  *
  */
-void multiply_spmat_lists(spmat_lists *A, double *v, double *result){
+void multiply_spmat_lists(const spmat_lists *A, const double *v, double *result){
 	int i;
 	linked_list *tmp;
 	matrix_element *curr;

@@ -18,19 +18,20 @@ typedef struct _int_set {
 typedef struct _set_of_sets {
 	linked_list* sets;
 
-	/*add this array values as another set
-	 * return value indicates if add was successful
+	/* add this array values as another set
+	 * return value indicates successful use
 	 */
 	int (*add)(struct _set_of_sets*, int *values, int size);
 
-	/*the size of the next set to be retrieved
+	/* the size of the next set to be retrieved
 	 * if there are no sets if returns a non-positive value
 	 */
 	int (*get_sizeof_next)(struct _set_of_sets*);
 
-	/*copies a set into target and deletes it from here
+	/* copies a set into target and deletes it from here.
 	 * target must have enough memory allocated to it
 	 * the value needed should be retrieved by using get_sizeof_next
+	 * return value indicates successful use
 	 */
 	int (*pop)(struct _set_of_sets*, int *target);
 
