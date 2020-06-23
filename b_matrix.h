@@ -33,7 +33,7 @@ typedef struct _B_matrix {
 
 } B_matrix;
 
-/*allocates a new B matrix and initializes it*/
+/*allocates  a new B matrix and initializes it*/
 B_matrix* allocate_B(int n, int *k, spmat_lists *A);
 
 #endif /* B_MATRIX_H_ */
