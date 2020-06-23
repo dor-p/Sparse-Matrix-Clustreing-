@@ -8,7 +8,7 @@
 #ifndef SPMAT_LISTS_H_
 #define SPMAT_LISTS_H_
 
-#include "matrix_row.h"
+#include "linked_list.h"
 
 typedef struct _spmat_lists{
 	/* Matrix size (n*n) */
@@ -16,16 +16,13 @@ typedef struct _spmat_lists{
 
 		/* Adds row i the matrix. Called before any other call,
 		 * exactly n times in order (i = 0 to n-1) */
-		int	(*add_row)(struct _spmat_lists *A, const double *row, int i);
+		int	(*add_row)(struct _spmat_lists *A, const int *row, int i);
 
 		/* Frees all resources used by A */
 		void	(*free)(struct _spmat_lists *A);
 
-		/* Multiplies matrix A by vector v, into result (result is pre-allocated) */
-		void	(*mult)(const struct _spmat_lists *A, const double *v, double *result);
-
 		/*Array of matrix rows*/
-		matrix_row	**rows;
+		linked_list	**rows;
 
 } spmat_lists;
 

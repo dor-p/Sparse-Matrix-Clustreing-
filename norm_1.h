@@ -8,8 +8,8 @@
 #ifndef NORM_1_H_
 #define NORM_1_H_
 
-#include "spmat_lists.h"
+#include "b_matrix.h"
 
-double norm_1(spmat_lists*);
+double norm_1(B_matrix*);
 
 #endif /* NORM_1_H_ */

@@ -6,7 +6,6 @@
  */
 
 #include "norm_1.h"
-#include "matrix_row.h"
 #include "spmat_lists.h"
 #include <time.h>
 #include <stdio.h>
@@ -28,18 +27,18 @@ double norm_1_arrays(int n, double A[][n]){
 	}
 	return res;
 }
-
+/*
 double norm_1_test(int n, double A[][n]){
 	int i;
-	spmat_lists* B;
-	B = spmat_lists_allocate(n);
-	assert(B != NULL);
+	spmat_lists* A;
+	A = spmat_lists_allocate(n);
+	assert(A != NULL);
 
 	for(i = 0; i < n; i++){
-		B->add_row(B, A[i], i);
+		A->add_row(A, A[i], i);
 	}
 	return norm_1(B);
-}
+}*/
 
 int string_to_int(char *s){
 	int res, len, i;
@@ -50,7 +49,8 @@ int string_to_int(char *s){
 	return res;
 }
 
-int main(int argc, char* argv[]){
+int main(){
+	/*
 	int i, j, n;
 	assert(argc >= 0 );
 	n = string_to_int(argv[1]);
@@ -60,7 +60,7 @@ int main(int argc, char* argv[]){
 
 	for(i = 0; i < n; i++){
 		for(j = 0; j < n; j++){
-			/*A[i][j] = pow(-1, (double)(i + j)) * (i + j);*/
+			*A[i][j] = pow(-1, (double)(i + j)) * (i + j);*
 			A[i][j] = (double)rand();
 		}
 	}
@@ -72,6 +72,6 @@ int main(int argc, char* argv[]){
 	}
 	else{
 		printf("all good here");
-	}
+	}*/
 	return 0;
 }

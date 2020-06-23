@@ -40,7 +40,7 @@ double norm_1(B_matrix* B){
 		for(j = 0; j < B->n; j++){
 			tmp = -((double)(B->k[i] * B->k[j]) / (double)B->M);
 			if(i == j) tmp += B->lambda;
-			if(curr != NULL && (int*)curr->value == j){
+			if(curr != NULL && *((int*)(curr->value)) == j){
 				tmp += 1;
 				curr = curr->next;
 			}

@@ -14,16 +14,28 @@
 /*
  *
  */
-int add_row_linked_lists(spmat_lists *A, const double *row, int i){
+int add_row_linked_lists(spmat_lists *A, const int *row, int i){
 	int j, as;
-	A->rows[i] = allocate_row();
-	if(A->rows[i] == NULL){
-		free(A->rows[i]);
+	int* tmp;
+	j = A->n - 1;
+	while(j >= 0 && row[j] == 0) j--;
+	if(j < 0) return 1;
+	tmp = (int*)malloc(sizeof(int));
+	if(tmp == NULL){
+		A->rows[i]->free(A->rows[i]);
 		return 0;
 	}
-	for(j = A->n - 1; j >= 0; j--){
-		if(row[j] != 0.0){
-			as = A->rows[i]->add(A->rows[i], row[j], j);
+	*tmp = j;
+	A->rows[i] = allocate_list(tmp);
+	for(; j >= 0; j--){
+		if(row[j] != 0){
+			tmp = (int*)malloc(sizeof(int));
+			if(tmp == NULL){
+				A->rows[i]->free(A->rows[i]);
+				return 0;
+			}
+			*tmp = j;
+			as = A->rows[i]->add(A->rows[i], tmp);
 			if(!as) return as;
 		}
 	}
@@ -42,26 +54,6 @@ void free_spmat_lists(spmat_lists *A){
 	free(A);
 }
 
-
-
-/*
- *
- */
-void multiply_spmat_lists(const spmat_lists *A, const double *v, double *result){
-	int i;
-	linked_list *tmp;
-	matrix_element *curr;
-	for(i = 0; i < A->n; i++){
-		result[i] = 0.0;
-		tmp = A->rows[i]->lst;
-		while(tmp != NULL){
-			curr = (matrix_element*)tmp->value;
-			result[i] += curr->value * v[curr->column] ;
-		}
-	}
-}
-
-
 /*
  *
  */
@@ -73,7 +65,7 @@ spmat_lists*  spmat_lists_allocate(int n){
 		return NULL;
 	}
 
-	res->rows = (matrix_row**)calloc(n, sizeof(matrix_row*));
+	res->rows = (linked_list**)calloc(n, sizeof(linked_list*));
 	if(res->rows == NULL){
 		free(res->rows);
 		free(res);
@@ -83,7 +75,6 @@ spmat_lists*  spmat_lists_allocate(int n){
 	res->n = n;
 	res->add_row = add_row_linked_lists;
 	res->free = free_spmat_lists;
-	res->mult = multiply_spmat_lists;
 
 	return res;
 }

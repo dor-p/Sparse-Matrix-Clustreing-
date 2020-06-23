@@ -7,7 +7,6 @@
 
 #include "norm_1.h"
 #include "linked_list.h"
-#include "matrix_row.h"
 #include "spmat_lists.h"
 #include <stdio.h>
 #include <stdlib.h>

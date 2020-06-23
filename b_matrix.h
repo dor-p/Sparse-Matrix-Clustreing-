@@ -20,13 +20,16 @@ typedef struct _B_matrix {
 	/*M = sum(k)*/
 	int M;
 
-	/*actual ajaisency matrix of the graph*/
+	/*actual adjacency matrix of the graph*/
 	spmat_lists *A;
 
 	/*a value to be added to the diagonal of the matrix
 	 *this is used for matrix shifting
 	 */
 	double lambda;
+
+	/*after using this method: target = Bv */
+	int (*multiply_vec)(struct _B_matrix* B, double* v, double* target);
 
 	/*free all resources of this B matrix*/
 	void (*free)(struct _B_matrix*);
