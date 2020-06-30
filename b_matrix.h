@@ -20,7 +20,7 @@ typedef struct _B_matrix {
 	/*M = sum(k)*/
 	int M;
 
-	/*actual adjacency matrix of the graph*/
+	/*actual sparse adjacency matrix of the graph*/
 	spmat_lists *A;
 
 	/*a value to be added to the diagonal of the matrix

@@ -16,26 +16,40 @@ typedef struct _int_set {
 } int_set;
 
 typedef struct _set_of_sets {
+
+	/*
+	 * linked list, each node points to a linked list of integers
+	 */
 	linked_list* sets;
 
-	/* add this array values as another set
+	/*
+	 * number of sets currently in this struct
+	 */
+	int N;
+
+	/*
+	 * add this array values as another set
 	 * return value indicates successful use
 	 */
 	int (*add)(struct _set_of_sets*, int *values, int size);
 
-	/* the size of the next set to be retrieved
-	 * if there are no sets if returns a non-positive value
+	/*
+	 * the size of the next set to be retrieved by pop.
+	 * if there are no sets, returns a non-positive value (say 0)
 	 */
 	int (*get_sizeof_next)(struct _set_of_sets*);
 
-	/* copies a set into target and deletes it from here.
+	/*
+	 * copies a set into target and deletes it from here.
 	 * target must have enough memory allocated to it
 	 * the value needed should be retrieved by using get_sizeof_next
 	 * return value indicates successful use
 	 */
 	int (*pop)(struct _set_of_sets*, int *target);
 
-	/*free all resources allocated to this struct*/
+	/*
+	 * free all resources allocated to this struct
+	 */
 	void (*free)(struct _set_of_sets*);
 
 } set_of_sets;
