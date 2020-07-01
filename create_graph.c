@@ -16,7 +16,7 @@
 int string_to_int(char* s){
 	int res, i;
 	res = 0;
-	for(i = 0; i < strlen(s); i++){
+	for(i = 0; i < (int)strlen(s); i++){
 		res = res * 10 + (s[i] - '0');
 	}
 	return res;
@@ -24,7 +24,7 @@ int string_to_int(char* s){
 
 int bernuly(int p, int q){
 	int res;
-	assert(0 <= p <= q);
+	assert(0 <= p && p <= q);
 	if(p == q) return 1;
 	if(p == 0) return 0;
 	res = (rand() % q) + 1;

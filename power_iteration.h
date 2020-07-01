@@ -9,7 +9,6 @@
 #define POWER_ITERATION_H_
 
 #include "b_matrix.h"
-#include "b_matrix.h"
 
 /*
  * after running this function:
@@ -17,10 +16,5 @@
  * s_i = b_i > 0 ? 1 : -1 where b is the dominant eigenvector
  */
 void power_iteration(B_matrix* B, double* eigen_value, double* s);
-
-/*
- *returns the dot product of v and u
- */
-double dot_product(double *v, double *u);
 
 #endif /* POWER_ITERATION_H_ */

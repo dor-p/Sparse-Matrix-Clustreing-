@@ -5,11 +5,12 @@
  *      Author: computer
  */
 
-#include "linked_list.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <assert.h>
+#include "linked_list.h"
 
 /*
  * we assume that the argument lst is not NULL
@@ -58,19 +59,6 @@ void* ecxtract_first(linked_list **lst){
 /*
  * we assume that the argument lst is not NULL
  */
-int for_each_list(linked_list *lst, int (*func)(void* , void* ), void* vd){
-	int as;
-	as = func(lst->value, vd);
-	if(!as) return as;
-	if(lst->next != NULL){
-		return for_each_list(lst->next, func, vd);
-	}
-	return as;
-}
-
-/*
- * we assume that the argument lst is not NULL
- */
 void free_LL(linked_list *lst){
 	free(lst->value);
 	if(lst->next != NULL) free_LL(lst->next);
@@ -92,7 +80,6 @@ linked_list* allocate_list(void *val){
 	res->size = 1;
 
 	res->add = add_LL;
-	res->for_each = for_each_list;
 	res->free = free_LL;
 
 	return res;

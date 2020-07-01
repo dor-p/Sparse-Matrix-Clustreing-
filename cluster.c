@@ -9,11 +9,11 @@
 #include "spmat_lists.h"
 #include "set_of_sets.h"
 #include "b_matrix.h"
-#include "linked_list.h"
 #include "norm_1.h"
 #include "modularity_maximization.h"
 #include "power_iteration.h"
 #include "sub_graph.h"
+#include "read_write_graph.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>

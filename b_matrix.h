@@ -39,4 +39,9 @@ typedef struct _B_matrix {
 /*allocates  a new B matrix and initializes it*/
 B_matrix* allocate_B(spmat_lists *A);
 
+/*
+ *returns the dot product of v and u
+ */
+double dot_product(double *v, double *u);
+
 #endif /* B_MATRIX_H_ */

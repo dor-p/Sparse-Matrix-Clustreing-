@@ -32,12 +32,6 @@ typedef struct _linked_list {
 	void* (*ecxtract_first)(struct _linked_list *lst);
 
 	/*
-	 * Iterates over the list and and performs func on each value
-	 */
-	int (*for_each)(struct _linked_list *lst, int (*func)(), void* vd);
-
-
-	/*
 	 * Free all nodes from this one to the end
 	 */
 	void	(*free)(struct _linked_list *lst);

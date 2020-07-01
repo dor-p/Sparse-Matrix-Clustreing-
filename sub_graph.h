@@ -14,6 +14,6 @@
  * given a graph G (in spmat) and a subset of its indices,
  * return a pointer to the adjacency matrix of the subset
  */
-spmat_lists* get_subA(spmat_lists* G, int* subset, int sub_size);
+spmat_lists*  get_subA(spmat_lists* G, int* subset, int sub_size);
 
 #endif /* SUB_GRAPH_H_ */
