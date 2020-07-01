@@ -28,16 +28,16 @@ typedef struct _set_of_sets {
 	int N;
 
 	/*
+	 * the size of the next set to be retrieved by pop.
+	 * if there are no sets, returns a non-positive value (say 0)
+	 */
+	int sizeof_next;
+
+	/*
 	 * add this array values as another set
 	 * return value indicates successful use
 	 */
 	int (*add)(struct _set_of_sets*, int *values, int size);
-
-	/*
-	 * the size of the next set to be retrieved by pop.
-	 * if there are no sets, returns a non-positive value (say 0)
-	 */
-	int (*get_sizeof_next)(struct _set_of_sets*);
 
 	/*
 	 * copies a set into target and deletes it from here.

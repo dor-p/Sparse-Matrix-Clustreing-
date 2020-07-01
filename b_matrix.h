@@ -14,7 +14,7 @@ typedef struct _B_matrix {
 	/*number of rows and columns in the matrix*/
 	int n;
 
-	/*vector of degrees of each vertex in the graph: k_i = sum(row[i])*/
+	/*vector of degrees of each vertex in the graph: k_i = deg(i)*/
 	int *k;
 
 	/*M = sum(k)*/
@@ -37,6 +37,6 @@ typedef struct _B_matrix {
 } B_matrix;
 
 /*allocates  a new B matrix and initializes it*/
-B_matrix* allocate_B(int n, int *k, spmat_lists *A);
+B_matrix* allocate_B(spmat_lists *A);
 
 #endif /* B_MATRIX_H_ */

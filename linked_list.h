@@ -13,6 +13,11 @@ typedef struct _linked_list {
 	 * the value of the current node
 	 */
 	void *value;
+
+	/*number of elements in this list*/
+	int size;
+
+	/*pointer to next node*/
 	struct _linked_list *next;
 
 	/*
@@ -42,7 +47,7 @@ typedef struct _linked_list {
 /*
  * Allocates a new linked-lists
  */
-linked_list* 	allocate_list(void *val);
+linked_list* allocate_list(void *val);
 
 
 #endif /* LINKED_LIST_H_ */

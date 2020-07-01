@@ -28,8 +28,10 @@ int add_LL(linked_list *lst, void *val){
 
 	new_next->value = lst->value;
 	new_next->next = lst->next;
+	new_next->size = lst->size;
 	lst->next = new_next;
 	lst->value = val;
+	lst->size = new_next->size + 1;
 
 	return 1;
 }
@@ -49,6 +51,7 @@ void* ecxtract_first(linked_list **lst){
 	*lst = (*lst)->next;
 	free(tmp->next);
 	free(tmp->value);
+
 	return res;
 }
 
@@ -86,6 +89,7 @@ linked_list* allocate_list(void *val){
 	}
 	res->value = val;
 	res->next = NULL;
+	res->size = 1;
 
 	res->add = add_LL;
 	res->for_each = for_each_list;

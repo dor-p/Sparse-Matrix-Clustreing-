@@ -10,6 +10,9 @@
 
 #include "set_of_sets.h"
 
-
+/*
+ *
+ */
+void modularity_maximization(int* set, int size, double* s);
 
 #endif /* MODULARITY_MAXIMIZATION_H_ */
