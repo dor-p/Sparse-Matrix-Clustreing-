@@ -9,10 +9,11 @@
 #define MODULARITY_MAXIMIZATION_H_
 
 #include "set_of_sets.h"
+#include "b_matrix.h"
 
 /*
  *
  */
-void modularity_maximization(int* set, int size, double* s);
+void maximize_modularity(int* s, B_matrix* hatB, int* target);
 
 #endif /* MODULARITY_MAXIMIZATION_H_ */
