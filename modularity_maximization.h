@@ -14,6 +14,6 @@
 /*
  *
  */
-void maximize_modularity(int* s, B_matrix* hatB, int* target);
+void maximize_modularity(double* s, B_matrix* hatB, double* target);
 
 #endif /* MODULARITY_MAXIMIZATION_H_ */

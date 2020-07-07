@@ -24,6 +24,6 @@ spmat_lists*  get_subA(spmat_lists* G, int* subset, int sub_size);
  * to the number i' vertex of the entire graph 
  * (check project instructions page 4 for clarification)
  */
-b_marix* get_hatB_g(spmat_lists* subA, int* subset, b_matrix B);
+B_matrix* get_hatB_g(spmat_lists* subA, int* subset, B_matrix *B);
 
 #endif /* SUB_GRAPH_H_ */

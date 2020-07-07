@@ -20,6 +20,6 @@
  * eigen_value = dominant eigenvalue of B
  * s[i] = IS_POSITIVE(b[i]) ? 1 : -1; where b is the dominant eigenvector
  */
-void power_iteration(B_matrix* B, double* eigen_value, int* s);
+void power_iteration(B_matrix* B, double* eigen_value, double* s);
 
 #endif /* POWER_ITERATION_H_ */
