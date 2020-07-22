@@ -9,7 +9,6 @@
 #define POWER_ITERATION_H_
 
 #ifndef IS_POSITIVE
-#define IS_POSITIVE
 #define IS_POSITIVE(X) ((X) > 0.00001)
 #endif /* IS_POSITIVE */
 

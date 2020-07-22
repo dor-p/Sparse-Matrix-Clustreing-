@@ -19,9 +19,6 @@
 #include <string.h>
 
 
-#define IS_POSITIVE(X) ((X) > 0.00001)
-
-
 /*
  *
  */
@@ -41,7 +38,7 @@ void split_group(B_matrix* hatB, double *eigen_value, double *s){
 	hatB->lambda = norm;
 	power_iteration(hatB, eigen_value, s);
 	hatB->lambda -= norm;
-	eigen_value -= norm;
+	*eigen_value -= norm;
 }
 
 /*
@@ -88,7 +85,7 @@ void groups_to_res(set_of_sets* P, set_of_sets* O, double *s,
 void parse_clusters(set_of_sets* P, set_of_sets* O, spmat_lists* A){
 	int size;
 	int *curr;
-	double eigen_value, norm;
+	double eigen_value;
 	double *s1, *s2;
 	B_matrix* hatB;
 	spmat_lists* subA;

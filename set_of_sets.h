@@ -1,5 +1,5 @@
 /*
- * int_set.h
+ * set_of_sets.h
  *
  *  Created on: 21 Jun 2020
  *      Author: computer

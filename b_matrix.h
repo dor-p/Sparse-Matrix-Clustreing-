@@ -34,6 +34,9 @@ typedef struct _B_matrix {
 	/*free all resources of this B matrix*/
 	void (*free)(struct _B_matrix*);
 
+	/*compute actual value of hatB given row, and column*/
+	double (*to_value)(struct _B_matrix* B, int row, int col, int val);
+
 } B_matrix;
 
 /*allocates  a new B matrix and initializes it*/
