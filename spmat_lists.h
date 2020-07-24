@@ -12,7 +12,7 @@
 
 typedef struct _spmat_lists{
 	/* Matrix size (n*n) */
-		int		n;
+		int	n;
 
 		/* Adds row i the matrix. Called before any other call,
 		 * exactly n times in order (i = 0 to n-1) */
