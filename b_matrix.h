@@ -28,13 +28,21 @@ typedef struct _B_matrix {
 	 */
 	double lambda;
 
+	/*
+	 * the values of the diagonal of this hatB
+	 * hatB[i][i] = -(k[i]*k[i]/M) - sum(B[i][j] for j in g)
+	 */
+	double *diagonal;
+
 	/*after using this method: target = Bv */
 	int (*multiply_vec)(struct _B_matrix* B, double* v, double* target);
 
 	/*free all resources of this B matrix*/
 	void (*free)(struct _B_matrix*);
 
-	/*compute actual value of hatB given row, and column*/
+	/*compute actual value of hatB given: row and column s.t.
+	 * if(val) there is a connection between row and col
+	 * else: there isn't*/
 	double (*to_value)(struct _B_matrix* B, int row, int col, int val);
 
 } B_matrix;
@@ -45,6 +53,6 @@ B_matrix* allocate_B(spmat_lists *A);
 /*
  *returns the dot product of v and u
  */
-double dot_product(double *v, double *u);
+double dot_product(double *v, double *u, int n);
 
 #endif /* B_MATRIX_H_ */
