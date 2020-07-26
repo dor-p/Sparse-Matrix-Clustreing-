@@ -40,7 +40,7 @@ void free_B(B_matrix* B){
 
 
 
-B_matrix* allocate_B(spmat_lists* A){
+B_matrix* allocate_B(spmat_lists *A, int *k, int M){
 	int i;
 	linked_list* curr;
 	B_matrix *res;
@@ -48,25 +48,15 @@ B_matrix* allocate_B(spmat_lists* A){
 	if(res == NULL) return NULL;
 
 	res->n = A->n;
-	res->k = (int*)malloc(res->n * sizeof(int));
-	if(res->k == NULL){
-		free(res);
-		return NULL;
-	}
+	res->k = k;
+	res->M = M;
+	res->lambda = 0.0;
+
 	res->diagonal = (double*)malloc(res->n * sizeof(double));
 	if(res->diagonal == NULL){
-		free(res->k);
 		free(res);
 		return NULL;
 	}
-
-	res->M = 0;
-	for(i = 0; i < res->n; i++){
-		res->k[i] = A->rows[i] == NULL ? 0 : A->rows[i]->size;
-		res->M += res->k[i];
-	}
-
-	res->lambda = 0.0;
 
 	for(i = 0; i < res->n; i++){
 		res->diagonal[i] = -(double)(res->k[i] * res->k[i]) / (double)res->M;
