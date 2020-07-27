@@ -6,7 +6,10 @@
  */
 
 #include "spmat_lists.h"
+#include "helper_functions.c"
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 void get_vector(int n, int *v, int is_random, int (*f)(int)){
 	int i;
@@ -15,23 +18,25 @@ void get_vector(int n, int *v, int is_random, int (*f)(int)){
 	}
 }
 
-void multiply_matrix(int n, int mtrx[n][n], int *v, int *target){
-	int i, j;
+void multiply_matrix(int n, int *mtrx, int *v, int *target){
+	int i, j, *matrix;
+	matrix = (int (*)[n])mtrx;
 	for(i = 0; i < n; i++){
 		target[i] = 0;
 		for(j = 0; j < n; j++){
-			target[i] += mtrx[i][j] * v[j];
+			target[i] += matrix[i][j] * v[j];
 		}
 	}
 }
 
 
-void create_matrix(int n, int mtrx[n][n]){
-	int i, j, ber;
+void create_matrix(int n, int *mtrx){
+	int i, j, ber, *matrix;
+	matrix = (int (*)[n])mtrx;
 	for(i = 0; i < n; i++){
 		for(j = 0; j < n; j++){
 			ber = bernuly_test(1, n);
-			mtrx[i][j] = ber ? rand() % (n*n) : 0;
+			matrix[i][j] = ber ? rand() % (n*n) : 0;
 		}
 	}
 }
@@ -42,6 +47,7 @@ int main(int argc, char *argv[]){
 	spmat_lists *smtrx;
 	linked_list *r;
 	FILE *file;
+	assert(argc > 1);
 	file = fopen(argv[1]);
 	fread(&n, 1, file, sizeof(int));
 	mtrx = (int*)malloc(n * n * sizeof(int));
@@ -60,7 +66,7 @@ int main(int argc, char *argv[]){
 	t2 = (int*)malloc(n * sizeof(int));
 	srand(time(NULL));
 	get_vector(n, v, 1, NULL);
-	multiply_matrix(n, (int *[n])mtrx, v, t1);
+	multiply_matrix(n, mtrx, v, t1);
 
 	for(i = 0; i < n; i++){
 		r = smtrx->rows[i];

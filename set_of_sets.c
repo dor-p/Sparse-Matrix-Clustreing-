@@ -5,6 +5,8 @@
  *      Author: computer
  */
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "set_of_sets.h"
 
 int add_set(set_of_sets* S, int *values, int size){
@@ -38,23 +40,37 @@ int add_set(set_of_sets* S, int *values, int size){
 
 
 
-int *pop_set(set_of_sets* S, int *target){
+int pop_set(set_of_sets* S, int *target){
 	int_set* set;
+
+	if(S == NULL) return 0;
 	if(S->N == 0) return 0;
+	if(S->sets == NULL) return 0;
+
 	set = (int_set*)(S->sets->ecxtract_first(&(S->sets)));
-	if(set == NULL) return 0;
-	memcpy(set->values);
+	memcpy(target, set->values, set->size);
 	free(set->values);
 	free(set);
 
 	S->N -= 1;
-	S->sizeof_next = S->sets->size;
+	S->sizeof_next = S->sets != NULL ? ((int_set*)S->sets->value)->size : 0;
 	return 1;
 }
 
 
 void free_sets(set_of_sets* S){
-	S->sets->free(S->sets);
+	linked_list *tmp;
+
+	if(S == NULL) return;
+
+	while(S->sets != NULL){
+		free(((int_set*)(S->sets->value))->values);
+		free(S->sets->value);
+		tmp = S->sets;
+		S->sets = S->sets->next;
+		free(tmp);
+	}
+
 	free(S);
 }
 

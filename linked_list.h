@@ -29,7 +29,7 @@ typedef struct _linked_list {
 	/*
 	 * removes the first element and returns its value
 	 */
-	void* (*ecxtract_first)(struct _linked_list *lst);
+	void* (*ecxtract_first)(struct _linked_list **lst);
 
 	/*
 	 * Free all nodes from this one to the end

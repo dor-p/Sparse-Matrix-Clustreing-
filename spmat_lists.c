@@ -27,7 +27,7 @@ int add_row_linked_lists(spmat_lists *A, const int *row, int i){
 	}
 	*tmp = j;
 	A->rows[i] = allocate_list(tmp);
-	for(; j >= 0; j--){
+	for(j -= 1; j >= 0; j--){
 		if(row[j] != 0){
 			tmp = (int*)malloc(sizeof(int));
 			if(tmp == NULL){
@@ -48,7 +48,7 @@ int add_row_linked_lists(spmat_lists *A, const int *row, int i){
 void free_spmat_lists(spmat_lists *A){
 	int i;
 	for(i = 0; i < A->n; i++){
-		A->rows[i]->free(A->rows[i]);
+		if(A->rows[i] != NULL) A->rows[i]->free(A->rows[i]);
 	}
 	free(A->rows);
 	free(A);

@@ -16,18 +16,16 @@
  * we assume that the argument lst is not NULL
  */
 int add_LL(linked_list *lst, void *val){
+	linked_list *new_next;
 
-	linked_list *new_next = (linked_list*)malloc(sizeof(linked_list));
-	new_next->value = malloc(sizeof(val));
-	new_next->next = (linked_list*)malloc(sizeof(linked_list));
-	if(new_next == NULL || new_next->value == NULL || new_next->next == NULL){
+	if(lst == NULL) return 0;
+
+	new_next = allocate_list(lst->value);
+	if(new_next == NULL){
 		free(new_next);
-		free(new_next->value);
-		free(new_next->next);
 		return 0;
 	}
 
-	new_next->value = lst->value;
 	new_next->next = lst->next;
 	new_next->size = lst->size;
 	lst->next = new_next;
@@ -50,8 +48,7 @@ void* ecxtract_first(linked_list **lst){
 	res = (*lst)->value;
 	tmp = *lst;
 	*lst = (*lst)->next;
-	free(tmp->next);
-	free(tmp->value);
+	free(tmp);
 
 	return res;
 }

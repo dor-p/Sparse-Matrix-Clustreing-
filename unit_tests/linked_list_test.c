@@ -10,12 +10,38 @@
 #include <string.h>
 #include "helper_functions.c"
 
+/*
+ * return a list containing: n + 1, n,..., 1
+ * in int
+ */
+linked_list* get_lst_int(int n){
+	int i;
+	linked_list* res;
+	int tmp;
+	int *val;
+	val = (int*)malloc(sizeof(int));
+	*val = 1;
+	tmp = 1;
+	res = allocate_list((void*)val);
+	assert(res != NULL);
+
+
+	for(i = 0; i < n; i++){
+		tmp += 1;
+		val = (int*)malloc(sizeof(int));
+		*val = tmp;
+		res->add(res, (void*)val);
+	}
+
+	return res;
+}
+
 
 /*
  * return a list containing: n + 1, n,..., 1
  * in doubles
  */
-linked_list* get_lst(int n){
+linked_list* get_lst_double(int n){
 	int i;
 	linked_list* res;
 	double tmp;
@@ -42,6 +68,7 @@ linked_list* get_lst(int n){
  * types: 1 - int, 2 - double, 3 - char, 4 - string
  */
 void print_list(linked_list* lst, short value_type){
+	printf("%d\n", lst->size);
 	while(lst != NULL){
 		switch(value_type){
 		case 1 :
@@ -64,13 +91,15 @@ void print_list(linked_list* lst, short value_type){
 			printf("value type must be one of: 1, 2, 3, 4\n");
 			return;
 		}
+		lst = lst->next;
 	}
 	printf("\n");
 }
 
 int main(int argc, char* argv[]){
-	linked_list* lst = get_lst(string_to_int(argv[1]));
+	linked_list* lst = get_lst_int(string_to_int(argv[1]));
 	assert(argc > 1);
-	print_list(lst, 2);
+	print_list(lst, 1);
+	lst->free(lst);
 	return 0;
 }
