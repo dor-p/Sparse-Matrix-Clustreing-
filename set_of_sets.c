@@ -21,7 +21,7 @@ int add_set(set_of_sets* S, int *values, int size){
 		return 0;
 	}
 
-	memcpy(vals, values, size);
+	memcpy(vals, values, size * sizeof(int));
 
 	new_set->size = size;
 	new_set->values = vals;
@@ -48,7 +48,7 @@ int pop_set(set_of_sets* S, int *target){
 	if(S->sets == NULL) return 0;
 
 	set = (int_set*)(S->sets->ecxtract_first(&(S->sets)));
-	memcpy(target, set->values, set->size);
+	memcpy(target, set->values, set->size * sizeof(int));
 	free(set->values);
 	free(set);
 
