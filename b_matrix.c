@@ -61,14 +61,15 @@ B_matrix* allocate_B(spmat_lists *A, int *k, int M){
 		return NULL;
 	}
 
+	/*
+	 * Bg[i][i] = B[i][i] - sum(B[i][j] for j in g) =
+	 * = - sum(B[i][j] for j in g if j != i)
+	 */
 	for(i = 0; i < res->n; i++){
-		res->diagonal[i] = -(double)(k[i] * k[i]) / (double)M;
+		res->diagonal[i] = 0.0;
 		curr = A->rows[i];
 		for(j = 0; j < res->n; j++){
-			if(i == j){
-				res->diagonal[i] -= -(double)(k[i] * k[i]) / (double)M;
-				continue;
-			}
+			if(i == j) continue;
 			con = (curr!= NULL && *(int*)(curr->value) == j);
 			res->diagonal[i] -= to_value(res, i, j, con);
 			if(con) curr = curr->next;
