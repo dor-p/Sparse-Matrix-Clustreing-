@@ -7,6 +7,8 @@
 
 #include "b_matrix.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 
 int multiply_vec_B(B_matrix* B, double* v, double* target){
@@ -15,10 +17,9 @@ int multiply_vec_B(B_matrix* B, double* v, double* target){
 	for(i = 0; i < B->n; i++){
 		target[i] = 0.0;
 		curr = B->A->rows[i];
-		if(curr == NULL) continue;
 		for(j = 0; j < B->n; j++){
-			con = (j == *(int*)curr->value);
-			target[i] += to_value(B, i, j, con);
+			con = (curr != NULL && j == *(int*)curr->value);
+			target[i] += B->to_value(B, i, j, con) * v[j];
 			if(con) curr = curr->next;
 		}
 	}
@@ -36,12 +37,13 @@ void free_B(B_matrix* B){
 	free(B->k);
 	free(B->diagonal);
 	B->A->free(B->A);
+	free(B);
 }
 
 
 
 B_matrix* allocate_B(spmat_lists *A, int *k, int M){
-	int i;
+	int i, j, con;
 	linked_list* curr;
 	B_matrix *res;
 	res = (B_matrix*)malloc(sizeof(B_matrix));
@@ -50,6 +52,7 @@ B_matrix* allocate_B(spmat_lists *A, int *k, int M){
 	res->n = A->n;
 	res->k = k;
 	res->M = M;
+	res->A = A;
 	res->lambda = 0.0;
 
 	res->diagonal = (double*)malloc(res->n * sizeof(double));
@@ -59,12 +62,16 @@ B_matrix* allocate_B(spmat_lists *A, int *k, int M){
 	}
 
 	for(i = 0; i < res->n; i++){
-		res->diagonal[i] = -(double)(res->k[i] * res->k[i]) / (double)res->M;
+		res->diagonal[i] = -(double)(k[i] * k[i]) / (double)M;
 		curr = A->rows[i];
-		if(curr == NULL) continue;
-		while(curr != NULL){
-			res->diagonal[i] -= res->to_value(res, i, *(int*)curr->value, 1);
-			curr = curr->next;
+		for(j = 0; j < res->n; j++){
+			if(i == j){
+				res->diagonal[i] -= -(double)(k[i] * k[i]) / (double)M;
+				continue;
+			}
+			con = (curr!= NULL && *(int*)(curr->value) == j);
+			res->diagonal[i] -= to_value(res, i, j, con);
+			if(con) curr = curr->next;
 		}
 	}
 

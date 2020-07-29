@@ -12,21 +12,13 @@
 #include <math.h>
 #include <assert.h>
 
-/*
- * this is the function for the for_each
- *
-int add_to_norm(matrix_element *elem, void *column_sums){
-	double *double_sums = (double*)column_sums;
-	double_sums[elem->column] += fabs(elem->value);
-	return 1;
-}*/
 
 /*
  *calculates the norm_1 of B
  */
 double norm_1(B_matrix* B){
-	int i, j;
-	double res, tmp;
+	int i, j, con;
+	double res;
 	linked_list *curr;
 	double *column_sums = (double*)calloc(B->n, sizeof(double));
 	if(column_sums == NULL){
@@ -38,8 +30,9 @@ double norm_1(B_matrix* B){
 		curr = B->A->rows[i];
 		/*this assumes that the matrix rows are sorted*/
 		for(j = 0; j < B->n; j++){
-			column_sums[j] += fabs(B->to_value(B, i, j, *(int*)curr->value == j));
-			if(*(int*)curr->value == j) curr = curr->next;
+			con = (curr != NULL) && (*(int*)(curr->value) == j);
+			column_sums[j] += fabs(B->to_value(B, i, j, con));
+			if(con) curr = curr->next;
 		}
 	}
 	res = 0.0;
