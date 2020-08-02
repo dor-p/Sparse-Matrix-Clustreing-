@@ -40,7 +40,7 @@ typedef struct _B_matrix {
 	/*free all resources of this B matrix*/
 	void (*free)(struct _B_matrix*);
 
-	/*compute actual value of hatB given: row and column s.t.
+	/*compute actual value of hatB given: row and column such that
 	 * if(val) there is a connection between row and col
 	 * else: there isn't*/
 	double (*to_value)(struct _B_matrix* B, int row, int col, int val);
