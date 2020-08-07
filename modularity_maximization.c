@@ -9,24 +9,24 @@
 
 /*helper function for allocating resources for modularity maximization*/
 int allocate_MM_vectors(double **bestS, double **delta,
-									double **stag, int **hasMoved){
-	*bestS = (double*)malloc(hatB->n * sizeof(double));
+									double **stag, int **hasMoved, int n){
+	*bestS = (double*)malloc(n * sizeof(double));
 	if(*bestS == NULL) return 0;
 
-	*stag = (double*)malloc(hatB->n * sizeof(double));
+	*stag = (double*)malloc(n * sizeof(double));
 	if(*stag == NULL){
 		free(*bestS);
 	    return 0;
 	}
 
-	*delta = (double*)malloc(hatB->n * sizeof(double));
+	*delta = (double*)malloc(n * sizeof(double));
 	if(*delta == NULL){
 	    free(*bestS);
 	    free(*stag);
 	    return 0;
 	}
 
-	hasMoved = (int*)malloc(hatB->n*sizeof(int));
+	hasMoved = (int*)malloc(n * sizeof(int));
 	if(delta == NULL){
 	    free(bestS);
 	    free(stag);
@@ -43,7 +43,7 @@ int modularity_maximization(b_matrix* hatB, double *s){
   int i, j, k, con, changed, moved, *hasMoved;
   linked_list *currentNode;
 
-  if(!allocate_MM_vectors(&bestS, &delta, &stag, &hasMoved)) return 0;
+  if(!allocate_MM_vectors(&bestS, &delta, &stag, &hasMoved, hatB->n)) return 0;
 
   memcpy(bestS, s, hatB->n);
   matrix_mult_left(s, hatB, s);
@@ -92,13 +92,7 @@ int modularity_maximization(b_matrix* hatB, double *s){
 
     }
 
-    changed = 0;
-    for(i = 0; i < hatB->n; i++){
-      if(bestS[i] != s[i]){
-        changed = 1;
-        break;
-      }
-    }
+    changed = memcmp(bestS, s, hatB->n * sizeof(double));
 
   } while(changed);
   
