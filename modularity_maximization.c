@@ -7,43 +7,46 @@
 #include <string.h>
 
 
+/*helper function for allocating resources for modularity maximization*/
+int allocate_MM_vectors(double **bestS, double **delta,
+									double **stag, int **hasMoved){
+	*bestS = (double*)malloc(hatB->n * sizeof(double));
+	if(*bestS == NULL) return 0;
+
+	*stag = (double*)malloc(hatB->n * sizeof(double));
+	if(*stag == NULL){
+		free(*bestS);
+	    return 0;
+	}
+
+	*delta = (double*)malloc(hatB->n * sizeof(double));
+	if(*delta == NULL){
+	    free(*bestS);
+	    free(*stag);
+	    return 0;
+	}
+
+	hasMoved = (int*)malloc(hatB->n*sizeof(int));
+	if(delta == NULL){
+	    free(bestS);
+	    free(stag);
+	    free(delta);
+	    return 0;
+	}
+
+	return 1;
+}
+
+
 int modularity_maximization(b_matrix* hatB, double *s){
   double bk, M, bestM, *bestS, *delta, *stag;
   int i, j, k, con, changed, moved, *hasMoved;
   linked_list *currentNode;
 
-  bestS = (double*)malloc(hatB->n * sizeof(double));
-  if(bestS == NULL){
-    free(bestS);
-    return 0;
-  }
-
-  stag = (double*)malloc(hatB->n * sizeof(double));
-  if(stag == NULL){
-    free(bestS);
-    free(stag);
-    return 0;
-  }
-
-  delta = (double*)malloc(hatB->n * sizeof(double));
-  if(delta == NULL){
-    free(bestS);
-    free(stag);
-    free(delta);
-    return 0;
-  }
-
-  hasMoved = (int*)malloc(hatB->n*sizeof(int));
-  if(delta == NULL){
-    free(bestS);
-    free(stag);
-    free(delta);
-    free(hasMoved);
-    return 0;
-  }
+  if(!allocate_MM_vectors(&bestS, &delta, &stag, &hasMoved)) return 0;
 
   memcpy(bestS, s, hatB->n);
-  matrix_mult_left(s, subModularity, s);
+  matrix_mult_left(s, hatB, s);
   bestM = dot_product(s, bestS, hatB->n);
 
   do{
@@ -66,7 +69,7 @@ int modularity_maximization(b_matrix* hatB, double *s){
         currentNode = hatB->A->rows[i];
         for(j = 0; j < hatB->n; j++){
           con = currentNode != NULL && *(int*)currentNode->value == j;
-          dleta[j] -= s[i] * s[j] * hatB->to_value(hatB, i, j, con);
+          delta[j] -= s[i] * s[j] * hatB->to_value(hatB, i, j, con);
           if(con) currentNode = currentNode->next;
         }
       }
@@ -94,6 +97,7 @@ int modularity_maximization(b_matrix* hatB, double *s){
       if(bestS[i] != s[i]){
         changed = 1;
         break;
+      }
     }
 
   } while(changed);
