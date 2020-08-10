@@ -91,10 +91,12 @@ int init_parse(int **curr, double **s1, double **s2, int size,
 	*curr = (int*)malloc(size * sizeof(int));
 	*s1 = (double*)malloc(size * sizeof(double));
 	*s2 = (double*)malloc(size * sizeof(double));
-	if(*curr == NULL || *s1 == NULL || *s2 == NULL){
+	k = (int*)malloc(size * sizeof(int));
+	if(*curr == NULL || *s1 == NULL || *s2 == NULL || k == NULL){
 		if(*curr != NULL) free(*curr);
 		if(*s1 != NULL) free(*s1);
 		if(*s2 != NULL) free(*s2);
+		if(k != NULL) free(k);
 		return 0;
 	}
 
@@ -119,7 +121,7 @@ int init_parse(int **curr, double **s1, double **s2, int size,
  * given P = {{1,...,n}}, O = {} and A represents the graph
  */
 int parse_clusters(set_of_sets* P, set_of_sets* O, spmat_lists* A){
-	int size, i, M, *k, *tmpk, *curr;
+	int size, *curr;
 	double eigen_value;
 	double *s1, *s2;
 	B_matrix *hatB, *B;
@@ -162,7 +164,7 @@ int parse_clusters(set_of_sets* P, set_of_sets* O, spmat_lists* A){
 
 		if(eigen_value <= 0.0) O->add(O, curr, size);
 
-		else if(dot_product(s1, s2) <= 0) O->add(O, curr, size);
+		else if(dot_product(s1, s2, size) <= 0) O->add(O, curr, size);
 
 		else groups_to_res(P, O, s2, curr, size);
 
@@ -175,20 +177,29 @@ int parse_clusters(set_of_sets* P, set_of_sets* O, spmat_lists* A){
 	return 1;
 }
 
+/*
+ * function for exiting correctly if an error should happen
+ */
+void main_error(char *s){
+	printf("%s\n", s);
+	/*TODO free all memory*/
+}
 
 /*
  *
  */
 int main(int argc, char* argv[]){
-	int n, as, *v;
+	int n, *v;
 	set_of_sets *O, *P;
 	spmat_lists* A;
 	FILE *file;
-	if(argc < 3) /**/
-	file = fopen(argv[1]);
-	if(file == NULL) /**/
-	as = fread(&n, 1, file, sizeof(int));
-	if(!as) /**/
+
+	if(argc < 3) main_error("Program is missing arguments");
+	file = fopen(argv[1], "r");
+	if(file == NULL) main_error("Opening file for reading has failed");
+
+	if(!fread(&n, 1, sizeof(int), file)) main_error("Reading from file has failed");
+
 	A = spmat_lists_allocate(n);
 	P = allocate_set_of_sets();
 	O = allocate_set_of_sets();
@@ -198,15 +209,18 @@ int main(int argc, char* argv[]){
 		if(O != NULL) free(O);
 		if(A != NULL) free(A);
 		if(v != NULL) free(v);
-		/**/
+		main_error("Memory allocation of P, O, A or v has failed");
 	}
-	as = read_graph(file, A);
-	if(!as) /**/
-	P->add(P, v, n);
-	parse_clusters(P, O, A);
+
+	if(!read_graph(file, A)) main_error("Reading A has failed");
 	fclose(file);
-	file = fopen(argv[2]);
-	write_sets(file, O);
+
+	if(!P->add(P, v, n)) main_error("Add to P has failed");
+	if(!parse_clusters(P, O, A)) main_error("Main algorithm has failed");
+
+	file = fopen(argv[2], "w");
+	if(file == NULL) main_error("Opening file for writing has failed");
+	if(!write_sets(file, O)) main_error("Writing O has failed");
 	fclose(file);
 
 	free(v);
