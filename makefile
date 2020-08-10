@@ -32,7 +32,7 @@ sub_graph: sub_graph.h sub_graph.c b_matrix
 set_of_sets: set_of_sets.h set_of_sets.c linked_list
 	gcc $(FLAGS) -c set_of_sets.c
 
-read_write_graph: read_write_graph.h read_write_graph.c set_of_sets
+read_write_graph: read_write_graph.h read_write_graph.c set_of_sets spmat_lists
 	gcc $(FLAGS) -c read_write_graph.c
 
 
