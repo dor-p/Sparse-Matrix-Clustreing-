@@ -55,4 +55,3 @@ B_matrix* get_hatB_g(spmat_lists* subA, int* subset, B_matrix *B){
 
 	return res;
 }
-
