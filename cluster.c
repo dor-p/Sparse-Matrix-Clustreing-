@@ -20,7 +20,7 @@
 
 
 /*
- *
+ * swap the values for two given pointers
  */
 void swap_int(int* a, int* b){
 	int tmp;
@@ -30,7 +30,8 @@ void swap_int(int* a, int* b){
 }
 
 /*
- *
+ * this takes care of matrix shifting
+ * after running this function we'll want to run modularity maximization
  */
 void split_group(B_matrix* hatB, double *eigen_value, double *s){
 	double norm;
@@ -42,7 +43,9 @@ void split_group(B_matrix* hatB, double *eigen_value, double *s){
 }
 
 /*
- *
+ * given a division into two groups (after modularity maximization)
+ * this function puts the values of group into g1, g2 and than
+ * puts g1, g2 into P or O depending on size
  */
 void groups_to_res(set_of_sets* P, set_of_sets* O, double *s,
 										int *group, int size){
@@ -80,7 +83,8 @@ void groups_to_res(set_of_sets* P, set_of_sets* O, double *s,
 }
 
 /*
- *
+ * this function implements the algorithm
+ * given P = {{1,...,n}}, O = {} and A represents the graph
  */
 int parse_clusters(set_of_sets* P, set_of_sets* O, spmat_lists* A){
 	int size, i, M, *tmpk;
