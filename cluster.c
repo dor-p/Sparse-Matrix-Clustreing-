@@ -83,32 +83,50 @@ void groups_to_res(set_of_sets* P, set_of_sets* O, double *s,
 }
 
 /*
- * this function implements the algorithm
- * given P = {{1,...,n}}, O = {} and A represents the graph
+ * function for initiating resources for parse_clusters
  */
-int parse_clusters(set_of_sets* P, set_of_sets* O, spmat_lists* A){
-	int size, i, M, *tmpk;
-	int *curr;
-	double eigen_value;
-	double *s1, *s2;
-	B_matrix* hatB;
-	spmat_lists* subA;
-
-	size = A->n;
-	curr = (int*)malloc(size * sizeof(int));
-	s1 = (double*)malloc(size * sizeof(double));
-	s2 = (double*)malloc(size * sizeof(double));
-	if(curr == NULL || s1 == NULL || s2 == NULL || k == NULL){
-		if(curr != NULL) free(curr);
-		if(s1 != NULL) free(s1);
-		if(s2 != NULL) free(s2);
+int init_parse(int **curr, double **s1, double **s2, int size,
+					spmat_lists* A, B_matrix **B){
+	int i, *k, M;
+	*curr = (int*)malloc(size * sizeof(int));
+	*s1 = (double*)malloc(size * sizeof(double));
+	*s2 = (double*)malloc(size * sizeof(double));
+	if(*curr == NULL || *s1 == NULL || *s2 == NULL){
+		if(*curr != NULL) free(*curr);
+		if(*s1 != NULL) free(*s1);
+		if(*s2 != NULL) free(*s2);
 		return 0;
 	}
 
 	M = 0;
 	for(i = 0; i < size; i++){
-		M += A->rows[i]->size;
+		k[i] = A->rows[i]->size;
+		M += k[i];
 	}
+
+	*B = allocate_B(A, k, M);
+	if(*B == NULL){
+		free(*curr);
+		free(*s1);
+		free(*s2);
+		return 0;
+	}
+	return 1;
+}
+
+/*
+ * this function implements the algorithm
+ * given P = {{1,...,n}}, O = {} and A represents the graph
+ */
+int parse_clusters(set_of_sets* P, set_of_sets* O, spmat_lists* A){
+	int size, i, M, *k, *tmpk, *curr;
+	double eigen_value;
+	double *s1, *s2;
+	B_matrix *hatB, *B;
+	spmat_lists* subA;
+
+	size = A->n;
+	if(!init_parse(&curr, &s1, &s2, size, A, &B)) return 0;
 
 	while(size > 0){
 		if(!P->pop(P, curr)){
@@ -117,31 +135,37 @@ int parse_clusters(set_of_sets* P, set_of_sets* O, spmat_lists* A){
 			free(s2);
 			return 0;
 		}
+
 		subA = get_subA(A, curr, size);
-		tmpk = (int*)malloc(size * sizeof(int));
-		if(tmpk == NULL || subA == NULL){
+		if(subA == NULL){
 			free(curr);
 			free(s1);
 			free(s2);
-			if(subA != NULL) subA->free(subA);
+			B->free(B);
 			return 0;
 		}
-		for(i = 0; i < size; i++){
-			tmpk[i] = A->rows[curr[i]]->size;
+		hatB = get_hatB_g(subA, curr, B);
+		if(hatB == NULL){
+			free(curr);
+			free(s1);
+			free(s2);
+			B->free(B);
+			subA->free(subA);
+			return 0;
 		}
-		hatB = allocate_B(subA, tmpk, M);
+
 		split_group(hatB, &eigen_value, s1);
+
+		modularity_maximization(hatB, s1);
+
 		hatB->multiply_vec(hatB, s1, s2);
 
 		if(eigen_value <= 0.0) O->add(O, curr, size);
 
 		else if(dot_product(s1, s2) <= 0) O->add(O, curr, size);
 
-		else{
-			modularity_maximization(hatB, s1);
-			groups_to_res(P, O, s2, curr, size);
-		}
-		subA->free(subA);
+		else groups_to_res(P, O, s2, curr, size);
+
 		hatB->free(hatB);
 		size = P->sizeof_next;
 	}
