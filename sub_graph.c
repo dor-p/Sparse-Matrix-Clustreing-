@@ -12,7 +12,30 @@
 
 spmat_lists*  get_subA(spmat_lists* G, int* subset, int sub_size){
 	spmat_lists* res;
+	linked_list* curr;
+	int i, j, *row;
 
+	row = (int*)malloc(sub_size * sizeof(int));
+	if(row == NULL) return NULL;
+
+	res = spmat_lists_allocate(sub_size);
+	if(res == NULL){
+		free(row);
+		return NULL;
+	}
+
+	for(i = 0; i < sub_size; i++){
+		curr = G->rows[subset[i]];
+		memset(row, 0, sub_size * sizeof(int));
+		for(j = 0; j < sub_size; j++){
+			row[j] = (curr != NULL && *(int*)curr->value == j) ? 1 : 0;
+			if(curr == NULL) continue;
+			if(*(int*)curr->value == j) curr = curr->next;
+		}
+		res->add_row(res, row, i);
+	}
+
+	free(row);
 	return res;
 }
 
