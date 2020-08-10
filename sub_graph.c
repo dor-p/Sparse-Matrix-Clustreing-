@@ -12,6 +12,20 @@
 
 spmat_lists*  get_subA(spmat_lists* G, int* subset, int sub_size){
 	spmat_lists* res;
+	linked_list* curr;
+	int i, j, k, *row;
+
+	row = (int*)malloc(sub_size * sizeof(int));
+	if(row == NULL) return NULL;
+
+	for(i = 0; i < sub_size; i++){
+		curr = G->rows[subset[i]];
+		for(j = 0; j <= sub_size; i++){
+			if(curr != NULL && subset[j] < *(int*)curr->value) continue;
+      
+
+		}
+	}
 
 	return res;
 }

@@ -76,8 +76,8 @@ int main(int argc, char* argv[])
 				group_set_add_group(&O, &g);
 				group_free(&g1);
 				group_free(&g2);
-
 			}
+
 			else
 			{
 				if (g2.size > 1)

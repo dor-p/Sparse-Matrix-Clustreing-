@@ -3,6 +3,111 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+
+int modularity_maximization(SparseMatrix* hatB, double *s){
+  double bk, M, bestM, *bestS, *delta, *stag, *sTempResult;
+  int i, k, changed,moved, *hasMoved;
+  Node *currentNode;
+
+  bestS = (double*)malloc(hatB->n * sizeof(double));
+  if(bestS == NULL){
+    free(bestS);
+    return 0;
+  }
+
+  stag = (double*)malloc(hatB->n * sizeof(double));
+  if(stag == NULL){
+    free(bestS);
+    free(stag);
+    return 0;
+  }
+
+  sTempResult = (double*)malloc(hatB->n * sizeof(double));
+  if(stag == NULL){
+    free(bestS);
+    free(stag);
+    return 0;
+  }
+
+  delta = (double*)malloc(hatB->n * sizeof(double));
+  if(delta == NULL){
+    free(bestS);
+    free(stag);
+    free(delta);
+    return 0;
+  }
+
+  hasMoved = (int*)malloc(hatB->n*sizeof(int));
+  if(delta == NULL){
+    free(bestS);
+    free(stag);
+    free(delta);
+    free(hasMoved);
+    return 0;
+  }
+  memcpy(bestS, s, hatB->n * sizeof(double));
+  matrix_mult_left(s, *hatB, sTempResult);
+  memcpy(s, sTempResult, hatB->n * sizeof(double));
+  bestM = dot(s, bestS, hatB->n);
+
+  do{
+    memcpy(s, bestS, hatB->n * sizeof(double));
+    M = bestM;
+    for(i = 0; i < hatB->n; i++){
+      hasMoved[i] = 0;
+    }
+    moved = 0;
+
+    while(moved < hatB->n){
+      matrix_mult_left(s, *hatB, stag);
+      for(i = 0; i < hatB->n; i++){
+        currentNode = hatB->rows[i];
+        while(currentNode != NULL && currentNode->column < i){
+          currentNode = currentNode->right;
+        }
+        bk = (currentNode != NULL && currentNode->column == i) ? currentNode->value : 0;
+        delta[i] = s[i] * (2 * bk - stag[i]);
+      }
+
+      for(i = 0; i < hatB->n; i++){
+        currentNode = hatB->rows[i];
+        while(currentNode != NULL){
+          delta[currentNode->column] -= s[i] * s[currentNode->column] * currentNode->value;
+        }
+      }
+
+      k = 0;
+      for(i = 0; i < hatB->n; i++){
+        if(delta[i] > delta[k]) k = i;
+      }
+      M += delta[k];
+      memcpy(stag, s, hatB->n * sizeof(double));
+      stag[k] *= -1;
+
+      moved++;
+      hasMoved[k] = 1;
+
+      if(M > bestM){
+        bestM = M;
+        memcpy(bestS, stag, hatB->n * sizeof(double));
+      }
+
+    }
+
+    changed = memcmp(s, bestS, hatB->n * sizeof(double));
+
+  } while(changed);
+
+  memcpy(s, bestS, hatB->n * sizeof(double));
+
+  free(bestS);
+  free(stag);
+  free(delta);
+  free(hasMoved);
+  free(sTempResult);
+  return 1;
+}
 
 GroupSet group_set_allocate_capacity(int capacity)
 {
@@ -208,6 +313,7 @@ int group_divide(SparseMatrix mat, Group g, Group* g1, Group* g2)
 		{
 			s[i] = eigenVector[i] > 0.0 ? 1.0 : -1.0;
 		}
+    modularity_maximization(&subModularity, s);
 		v = (double*)malloc(subModularity.n * sizeof(double));
 		if (v == NULL)
 		{
@@ -321,102 +427,5 @@ int group_set_write(GroupSet groupSet, const char* filename)
 	return 0;
 }
 
-int modularity_maximization(SparseMatrix* hatB, double *s){
-  double bk, M, bestM, *bestS, *delta, *stag;
-  int i, k, changed,moved, *hasMoved;
-  Node *currentNode;
 
-  bestS = (double*)malloc(hatB->n * sizeof(double));
-  if(bestS == NULL){
-    free(bestS);
-    return 0;
-  }
 
-  stag = (double*)malloc(hatB->n * sizeof(double));
-  if(stag == NULL){
-    free(bestS);
-    free(stag);
-    return 0;
-  }
-
-  delta = (double*)malloc(hatB->n * sizeof(double));
-  if(delta == NULL){
-    free(bestS);
-    free(stag);
-    free(delta);
-    return 0;
-  }
-
-  hasMoved = (int*)malloc(hatB->n*sizeof(int));
-  if(delta == NULL){
-    free(bestS);
-    free(stag);
-    free(delta);
-    free(hasMoved);
-    return 0;
-  }
-  memcpy(bestS, s, hatB->n);
-  matrix_mult_left(s, subModularity, s);
-  bestM = dot(s, bestS, hatB->n);
-
-  do{
-    memcpy(s, bestS, hatB->n);
-    M = bestM;
-    for(i = 0; i < hatB->n; i++){
-      hasMoved[i] = 0;
-    }
-    moved = 0;
-
-    while(moved < hatB->n){
-      matrix_mult_left(s, subModularity, stag);
-      for(i = 0; i < hatB->n; i++){
-        currentNode = hatB->rows[i];
-        while(currentNode != NULL && currentNode->column < i){
-          currentNode = currentNode->right;
-        }
-        bk = (currentNode != NULL && currentNode->column == i) ? currentNode->value : 0;
-        delta[i] = s[i] * (2 * bk - stag[i]);
-      }
-
-      for(i = 0; i < hatB->n; i++){
-        currentNode = hatB->rows[i];
-        while(currentNode != NULL){
-          delta[currentNode->column] -= s[i] * s[currentNode->column] * currentNode->value;
-        }
-      }
-
-      k = 0;
-      for(i = 0; i < hatB->n; i++){
-        if(delta[i] > delta[k]) k = i;
-      }
-      M += delta[k];
-      memcpy(stag, s, hatB->n);
-      stag[k] *= -1;
-
-      moved++;
-      hasMoved[k] = 1;
-
-      if(M > bestM){
-        bestM = M;
-        memcpy(bestS, stag, hatB->n);
-      }
-
-    }
-
-    changed = 0;
-    for(i = 0; i < hatB->n; i++){
-      if(bestS[i] != s[i]){
-        changed = 1;
-        break;
-    }
-
-  } while(changed);
-
-  memcpy(s, bestS, hatB->n);
-
-  free(bestS);
-  free(stag);
-  free(delta);
-  free(hasMoved);
-  return 1;
-}
