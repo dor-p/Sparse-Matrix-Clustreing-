@@ -75,12 +75,13 @@ int modularity_maximization(SparseMatrix* hatB, double *s){
         currentNode = hatB->rows[i];
         while(currentNode != NULL){
           delta[currentNode->column] -= s[i] * s[currentNode->column] * currentNode->value;
+          currentNode = currentNode->right;
         }
       }
 
       k = 0;
       for(i = 0; i < hatB->n; i++){
-        if(delta[i] > delta[k]) k = i;
+        if(delta[i] > delta[k] &&!hasMoved[i]) k = i;
       }
       M += delta[k];
       memcpy(stag, s, hatB->n * sizeof(double));
