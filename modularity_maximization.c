@@ -38,7 +38,7 @@ int allocate_MM_vectors(double **bestS, double **delta,
 }
 
 
-int modularity_maximization(b_matrix* hatB, double *s){
+int modularity_maximization(B_matrix* hatB, double *s){
   double bk, M, bestM, *bestS, *delta, *stag;
   int i, j, k, con, changed, moved, *hasMoved;
   linked_list *currentNode;
@@ -46,40 +46,41 @@ int modularity_maximization(b_matrix* hatB, double *s){
   if(!allocate_MM_vectors(&bestS, &delta, &stag, &hasMoved, hatB->n)) return 0;
 
   memcpy(bestS, s, hatB->n);
-  matrix_mult_left(s, hatB, s);
+  hatB->multiply_vec(hatB, bestS, s);
   bestM = dot_product(s, bestS, hatB->n);
 
   do{
-    memcpy(s, bestS, hatB->n);
+    memcpy(s, bestS, hatB->n * sizeof(double));
     M = bestM;
-    for(i = 0; i < hatB->n; i++){
-      hasMoved[i] = 0;
-    }
+    memset(hasMoved, 0, hatB->n * sizeof(int));
     moved = 0;
+    memcpy(stag, bestS, hatB->n * sizeof(double));
 
     while(moved < hatB->n){
-      hatB->multiply_vec(hatB, s, stag);
 
       for(i = 0; i < hatB->n; i++){
-        bk = hatB->diagonal[i] * s[i];
-        delta[i] = s[i] * (2 * bk - stag[i]); 
+        delta[i] = 2 * hatB->diagonal[i];
       }
 
       for(i = 0; i < hatB->n; i++){
         currentNode = hatB->A->rows[i];
         for(j = 0; j < hatB->n; j++){
           con = currentNode != NULL && *(int*)currentNode->value == j;
-          delta[j] -= s[i] * s[j] * hatB->to_value(hatB, i, j, con);
+          delta[i] -= 2 * stag[i] * stag[j] * hatB->to_value(hatB, i, j, con);
           if(con) currentNode = currentNode->next;
         }
       }
 
-      k = 0;
       for(i = 0; i < hatB->n; i++){
-        if(delta[i] > delta[k]) k = i;
+         if(!hasMoved[i]){
+        	 k = i;
+        	 break;
+         }
+       }
+      for(; i < hatB->n; i++){
+        if(delta[i] > delta[k] && !hasMoved[i]) k = i;
       }
       M += delta[k];
-      memcpy(stag, s, hatB->n);
       stag[k] *= -1;
 
       moved++;
@@ -87,7 +88,7 @@ int modularity_maximization(b_matrix* hatB, double *s){
 
       if(M > bestM){
         bestM = M;
-        memcpy(bestS, stag, hatB->n);
+        memcpy(bestS, stag, hatB->n * sizeof(double));
       }
 
     }
@@ -96,7 +97,7 @@ int modularity_maximization(b_matrix* hatB, double *s){
 
   } while(changed);
   
-  memcpy(s, bestS, hatB->n);
+  memcpy(s, bestS, hatB->n * sizeof(double));
 
   free(bestS);
   free(stag);
