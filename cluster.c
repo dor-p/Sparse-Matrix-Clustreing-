@@ -128,9 +128,11 @@ int parse_clusters(set_of_sets* P, set_of_sets* O, spmat_lists* A){
 	spmat_lists* subA;
 
 	size = A->n;
+  /*printf("size = %d", size);*/
 	if(!init_parse(&curr, &s1, &s2, size, A, &B)) return 0;
-
+  /*printf("size = %d", size);*/
 	while(size > 0){
+    /*printf("P = %p, curr = %p", (void*)P, (void*)curr);*/
 		if(!P->pop(P, curr)){
 			free(curr);
 			free(s1);
@@ -216,6 +218,7 @@ int main(int argc, char* argv[]){
 	fclose(file);
 
 	if(!P->add(P, v, n)) main_error("Add to P has failed");
+
 	if(!parse_clusters(P, O, A)) main_error("Main algorithm has failed");
 
 	file = fopen(argv[2], "w");

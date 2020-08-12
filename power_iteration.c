@@ -4,6 +4,8 @@
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
+#include <time.h>
+
 
 
 double* getRandomVector(int length)
@@ -11,6 +13,7 @@ double* getRandomVector(int length)
         int i;
 	double* vector = (double*)malloc(length * sizeof(double));
         if(vector == NULL) return NULL;
+  srand(0);
 	for (i = 0; i < length; ++i)
 	{
 		vector[i] = rand();
