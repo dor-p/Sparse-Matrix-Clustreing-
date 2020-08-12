@@ -9,6 +9,7 @@
 #include "read_write_graph.h"
 #include "b_matrix.h"
 #include "spmat_lists.h"
+#include "linked_list.h"
 
 #include <assert.h>
 #include <string.h>
@@ -17,20 +18,37 @@
 
 
 int main(int argc, char* argv[]){
-  double *Mat, *s, ev;
-  int *k;
+  double *s, ev, Mat;
+  int *k, M, n, i, j;
   spmat_lists *A;
   B_matrix *B;
   FILE *file;
+  linked_list *currentNode;
   assert(argc > 2);
   file = fopen(argv[1], "r");
 
+  fread(&n, sizeof(int), 1, file);
+  A = spmat_lists_allocate(n);
   read_graph(file, A);
   fclose(file);
 
-  k = (int*)calloc(B->n, sizeof(int));
-  B = allocate_B(A, k, 1);
-  memset(B->diagonal, 0, B->n * sizeof(double));
+  M = 0;
+  k = (int*)calloc(n, sizeof(int));
+  for(i = 0; i < n ;i++){
+    k[i] = A->rows[i] != NULL ? A->rows[i]->size : 0;
+    M += k[i];
+  }
+  B = allocate_B(A, k, M);
+  Mat = (double*)malloc(n * n * sizeof(double));
+  for(i = 0; i < hatB->n; i++){
+      currentNode = hatB->A->rows[i];
+      for(j = 0; j < hatB->n; j++){
+        con = currentNode != NULL && *(int*)currentNode->value == j;
+          Mat[i * n + j] = hatB->to_value(hatB, i, j, con);
+          if(con) currentNode = currentNode->next;
+        }
+      }
+
 
   s = (double*)malloc(B->n * sizeof(double));
   power_iteration(B, &ev, s);

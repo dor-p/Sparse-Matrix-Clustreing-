@@ -10,7 +10,7 @@ double* getRandomVector(int length)
 {
         int i;
 	double* vector = (double*)malloc(length * sizeof(double));
-        assert(vector != NULL);
+        if(vector == NULL) return NULL;
 	for (i = 0; i < length; ++i)
 	{
 		vector[i] = rand();
@@ -52,10 +52,10 @@ int power_iteration(B_matrix *mat,double *eigenValue ,double *s){
 
    while (1)
     {
-      multiply_vec(mat, eigenVector, matEigenVector);
+      mat->multiply_vec(mat, eigenVector, matEigenVector);
       magnitudeMatEigenVector = magnitude(matEigenVector, mat->n);
       ok = 1;
-      for (i = 0; i < mat.n; ++i)
+      for (i = 0; i < mat->n; ++i)
       {
         eigenVector2[i] = matEigenVector[i] / magnitudeMatEigenVector;
         if (IS_POSITIVE(fabs(eigenVector2[i] - eigenVector[i])))
