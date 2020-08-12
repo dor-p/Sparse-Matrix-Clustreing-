@@ -7,7 +7,7 @@
 #include <string.h>
 
 int modularity_maximization(SparseMatrix* hatB, double *s){
-  double bk, M, bestM, *bestS, *delta, *stag, *sTempResult;
+  double M, bestM, *bestS, *delta, *stag, *sTempResult;
   int i, k, changed,moved, *hasMoved;
   Node *currentNode;
 
@@ -55,36 +55,33 @@ int modularity_maximization(SparseMatrix* hatB, double *s){
   do{
     memcpy(s, bestS, hatB->n * sizeof(double));
     M = bestM;
-    for(i = 0; i < hatB->n; i++){
-      hasMoved[i] = 0;
-    }
+    memset(hasMoved, 0, hatB->n * sizeof(int));
     moved = 0;
+    memcpy(stag, s, hatB->n * sizeof(double));
 
     while(moved < hatB->n){
-      matrix_mult_left(s, *hatB, stag);
       for(i = 0; i < hatB->n; i++){
-        currentNode = hatB->rows[i];
-        while(currentNode != NULL && currentNode->column < i){
-          currentNode = currentNode->right;
-        }
-        bk = (currentNode != NULL && currentNode->column == i) ? currentNode->value : 0;
-        delta[i] = s[i] * (2 * bk - stag[i]);
+        delta[i] = 2 * matrix_get_value(*hatB, i, i);
       }
 
       for(i = 0; i < hatB->n; i++){
         currentNode = hatB->rows[i];
         while(currentNode != NULL){
-          delta[currentNode->column] -= s[i] * s[currentNode->column] * currentNode->value;
+          delta[i] -= stag[i] * stag[currentNode->column] * currentNode->value;
           currentNode = currentNode->right;
         }
       }
 
-      k = 0;
       for(i = 0; i < hatB->n; i++){
-        if(delta[i] > delta[k] &&!hasMoved[i]) k = i;
+        if(!hasMoved[i]){
+          k = i;
+          break;
+        }
+      }
+      for(; i < hatB->n; i++){
+        if(delta[i] > delta[k] && (!hasMoved[i])) k = i;
       }
       M += delta[k];
-      memcpy(stag, s, hatB->n * sizeof(double));
       stag[k] *= -1;
 
       moved++;
