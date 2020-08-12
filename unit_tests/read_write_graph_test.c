@@ -24,7 +24,7 @@ void graph_row_to_vec(int k, FILE *file, int* target){
 
 
 
-
+/*
 int main(int argc, char* argv[]){
 	int n, k, i, *row;
 	FILE* file;
@@ -59,4 +59,4 @@ int main(int argc, char* argv[]){
 	A->free(A);
 
 	return 0;
-}
+}*/

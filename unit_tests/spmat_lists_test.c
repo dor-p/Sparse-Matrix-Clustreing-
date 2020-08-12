@@ -41,7 +41,7 @@ void create_matrix(int n, int *mtrx){
 	}
 }
 
-
+/*
 int main(int argc, char *argv[]){
 	int i, n, k, *mtrx, *v, t1, t2;
 	spmat_lists *smtrx;
@@ -92,4 +92,4 @@ int main(int argc, char *argv[]){
 
 
 	return 0;
-}
+}*/

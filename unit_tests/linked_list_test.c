@@ -95,11 +95,11 @@ void print_list(linked_list* lst, short value_type){
 	}
 	printf("\n");
 }
-
+/*
 int main(int argc, char* argv[]){
 	linked_list* lst = get_lst_int(string_to_int(argv[1]));
 	assert(argc > 1);
 	print_list(lst, 1);
 	lst->free(lst);
 	return 0;
-}
+}*/

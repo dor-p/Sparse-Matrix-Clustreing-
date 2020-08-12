@@ -42,7 +42,7 @@ void sparse_to_full(B_matrix *B, double b[B->n][B->n]){
 void multiply_full_vec(int n, double b[n][n], double *v, double *target){
 
 }
-
+/*
 int main(int argc, char* argv[]){
 	FILE *file;
 	int n, M, *k, i, j;
@@ -91,4 +91,4 @@ int main(int argc, char* argv[]){
 	B->free(B);
 
 	return 0;
-}
+}*/
