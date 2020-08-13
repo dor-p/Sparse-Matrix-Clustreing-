@@ -168,7 +168,7 @@ int parse_clusters(set_of_sets* P, set_of_sets* O, spmat_lists* A){
 
 		else if(dot_product(s1, s2, size) <= 0) O->add(O, curr, size);
 
-		else groups_to_res(P, O, s2, curr, size);
+		else groups_to_res(P, O, s1, curr, size);
 
 		hatB->free(hatB);
 		size = P->sizeof_next;
