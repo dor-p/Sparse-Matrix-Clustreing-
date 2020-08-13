@@ -18,6 +18,31 @@
 #include <math.h>
 #include <string.h>
 
+/* added two print functions*/
+void group_print(int* group, int n)
+{
+	int i;
+
+	for (i = 0; i < n; ++i)
+	{
+		printf("%d ", group[i]);
+	}
+    printf("\n");
+}
+
+void group_set_print(set_of_sets *groupSet, int n)
+{
+	int i, k, *vec;
+  vec = (int*)malloc(n * sizeof(int));
+	for (i = 0; i < groupSet->N; ++i)
+	{
+    k = groupSet->sizeof_next;
+		groupSet->pop(groupSet, vec);
+    group_print(vec, k);
+	}
+		printf("\n");
+    free(vec);
+}
 
 /*
  * swap the values for two given pointers
@@ -60,8 +85,8 @@ void groups_to_res(set_of_sets* P, set_of_sets* O, double *s,
 		}
 		else{
 			if(i + g2 >= size) break;
-				swap_int(group + i, group + size - 1 - g2);
-				g2++;
+			swap_int(group + i, group + size - 1 - g2);
+			g2++;
 			}
 		}
 
@@ -77,7 +102,7 @@ void groups_to_res(set_of_sets* P, set_of_sets* O, double *s,
 			O->add(O, group + size - 1, 1);
 		}
 		else{
-			P->add(P, group + size - g2, g2);
+			P->add(P, group + g1, g2);
 		}
 	}
 }
@@ -160,7 +185,7 @@ int parse_clusters(set_of_sets* P, set_of_sets* O, spmat_lists* A){
 
 		split_group(hatB, &eigen_value, s1);
 
-		modularity_maximization(hatB, s1);
+		/*modularity_maximization(hatB, s1);*/
 
 		hatB->multiply_vec(hatB, s1, s2);
 
@@ -173,6 +198,7 @@ int parse_clusters(set_of_sets* P, set_of_sets* O, spmat_lists* A){
 		hatB->free(hatB);
 		size = P->sizeof_next;
 	}
+
 	free(curr);
 	free(s1);
 	free(s2);
@@ -191,7 +217,7 @@ void main_error(char *s){
  *
  */
 int main(int argc, char* argv[]){
-	int n, *v;
+	int i, n, *v;
 	set_of_sets *O, *P;
 	spmat_lists* A;
 	FILE *file;
@@ -217,6 +243,10 @@ int main(int argc, char* argv[]){
 	if(!read_graph(file, A)) main_error("Reading A has failed");
 	fclose(file);
 
+  for(i = 0; i < n; i++){
+    v[i] = i;
+  }
+
     if(!P->add(P, v, n)) main_error("Add to P has failed");
     /*printf("P = %p, A = %p", (void*)P, (void*)A);*/
 
@@ -224,6 +254,9 @@ int main(int argc, char* argv[]){
 
 	file = fopen(argv[2], "w");
 	if(file == NULL) main_error("Opening file for writing has failed");
+  
+  group_set_print(O, n);
+
 	if(!write_sets(file, O)) main_error("Writing O has failed");
 	fclose(file);
 
