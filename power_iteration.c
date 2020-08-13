@@ -70,7 +70,9 @@ int power_iteration(B_matrix *mat,double *eigenValue ,double *s){
       if (ok)
       {
         *eigenValue = dot(eigenVector2, eigenVector, mat->n) / dot(eigenVector, eigenVector, mat->n);
-        memcpy(s, eigenVector2, mat->n * sizeof(double));
+        for(i = 0; i < mat->n; i++){
+        	s[i] = IS_POSITIVE(eigenVector2[i]) > 0.00001 ? 1.0 : -1.0;
+        }
         break;
       }
 

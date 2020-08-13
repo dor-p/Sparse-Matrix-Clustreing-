@@ -28,7 +28,7 @@ int multiply_vec_B(B_matrix* B, double* v, double* target){
 
 double to_value(B_matrix* B, int row, int col, int val){
 	if(row == col) return B->diagonal[row] + B->lambda;
-	return (val ? 1 : 0) - (double)(B->k[row] * B->k[col]) / (double)B->M;
+	return (double)(val ? 1 : 0) - (double)(B->k[row] * B->k[col]) / (double)B->M;
 }
 
 

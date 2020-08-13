@@ -217,7 +217,8 @@ int main(int argc, char* argv[]){
 	if(!read_graph(file, A)) main_error("Reading A has failed");
 	fclose(file);
 
-	if(!P->add(P, v, n)) main_error("Add to P has failed");
+    if(!P->add(P, v, n)) main_error("Add to P has failed");
+    /*printf("P = %p, A = %p", (void*)P, (void*)A);*/
 
 	if(!parse_clusters(P, O, A)) main_error("Main algorithm has failed");
 

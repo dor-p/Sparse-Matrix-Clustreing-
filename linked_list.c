@@ -40,7 +40,7 @@ int add_LL(linked_list *lst, void *val){
  * 1. *lst == NULL
  * 2. (*lst)->value == NULL
  */
-void* ecxtract_first(linked_list **lst){
+void* ecxtract_first_LL(linked_list **lst){
 	void* res;
 	linked_list *tmp;
 	if((*lst) == NULL) return NULL;
@@ -77,6 +77,7 @@ linked_list* allocate_list(void *val){
 	res->size = 1;
 
 	res->add = add_LL;
+	res->ecxtract_first = ecxtract_first_LL;
 	res->free = free_LL;
 
 	return res;
