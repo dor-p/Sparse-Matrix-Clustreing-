@@ -1,9 +1,7 @@
-
 #include "matrix_functions.h"
 #include "linked_list.h"
 #include "spmat_lists.h"
 #include "read_write_graph.h"
-#include "sub_graph.h"
 
 
 #include <stdlib.h>
@@ -53,7 +51,6 @@ double dot(const double* vector1, const double* vector2, int length)
 	return result;
 }
 
-/***
 int matrix_set_value(SparseMatrix mat, int row, int col, double value)
 {
 	Node* previousRowNode = NULL;
@@ -68,15 +65,15 @@ int matrix_set_value(SparseMatrix mat, int row, int col, double value)
 		currentRowNode = currentRowNode->right;
 	}
 
-	* element present *
+	/* element present */
 	if (currentRowNode != NULL && currentRowNode->column == col)
 	{
-		* set value of element *
+		/* set value of element */
 		if (value != 0.0)
 		{
 			currentRowNode->value = value;
 		}
-		* erase element *
+		/* erase element */
 		else
 		{
 			while (currentColNode != NULL && currentColNode->row < row)
@@ -98,7 +95,7 @@ int matrix_set_value(SparseMatrix mat, int row, int col, double value)
 			free(currentRowNode);
 		}
 	}
-	* element not present, insert it *
+	/* element not present, insert it */
 	else if (value != 0.0)
 	{
 		newNode = (Node*)malloc(sizeof(Node));
@@ -139,19 +136,35 @@ int matrix_set_value(SparseMatrix mat, int row, int col, double value)
 	}
 
 	return 0;
-}***/
+}
 
-double matrix_get_value(SparseMatrix *mat, int row, int col, int val)
+double matrix_get_value(SparseMatrix mat, int row, int col)
 {
-	if(row == col) return mat->diagonal[row] + mat->lambda;
-	return (val ? 1.0 : 0.0) - (double)(mat->k[row] * mat->k[col]) / (double)mat->M;
+	Node* currentRowNode = mat.rows[row];
+
+	while (currentRowNode != NULL && currentRowNode->column < col)
+	{
+		currentRowNode = currentRowNode->right;
+	}
+
+	/* element present */
+	if (currentRowNode != NULL && currentRowNode->column == col)
+	{
+		/* return value of element */
+		return currentRowNode->value;
+	}
+	/* element not present, return 0 */
+	else
+	{
+		return 0.0;
+	}
 }
 
 double get_next_b(Row_iterator *I){
   int con;
   double res;
   con = (I->curr != NULL) && I->col == *(int*)I->curr->value;
-  res = (I->B)->to_value(I->B, I->row, I->col, con);
+  res = I->B->to_value(I->B, I->row, I->col, con);
   I->col = I->col + 1;
   if(I->col >= I->length){
     free(I);
@@ -165,7 +178,7 @@ Row_iterator* new_iterator(SparseMatrix *B, int row){
   res = (Row_iterator*)malloc(sizeof(Row_iterator));
   if(res == NULL) return NULL;
 
-  res->curr = B->A->rows[row];
+  res->curr = B->A->rows[i];
   res->length = B->n;
   res->row = row;
   res->col = 0;
@@ -186,7 +199,7 @@ double matrix_1norm(SparseMatrix* mat)
   sums = (double*)calloc(mat->n, sizeof(double));
   if(sums == NULL) return -1.0;
 
-	for (row = 0; row < mat->n; ++row)
+	for (row = 0; row < mat.n; ++row)
 	{
     I = new_iterator(mat, row);
     if(I == NULL){
@@ -202,7 +215,7 @@ double matrix_1norm(SparseMatrix* mat)
 
   for (col = 0; col < mat->n; ++row)
 		{
-			if(sums[col] > largestSum) largestSum = sums[col];
+			if(sums[col] > largestSum) largestSum sums[col];
 		}
 	return largestSum;
 }
@@ -274,27 +287,37 @@ SparseMatrix* matrix_allocate(int size)
 {
 	SparseMatrix* mat;
 	int col, i;
+  Row_iterator *I;
 
   mat = (SparseMatrix*)malloc(sizeof(SparseMatrix));
   if(mat == NULL) return NULL;
 
-	mat->A = spmat_lists_allocate(size);
-  mat->n = size;
+	mat->n = size;
 	mat->M = 0;
 	mat->k = (int*)malloc(size * sizeof(int));
-  mat->diagonal = (double*)calloc(size, sizeof(double));
+  mat->diagonal = (double*)malloc(size * sizeof(int));
   mat->lambda = 0.0;
-  mat-to_value = matrix_get_value;
-	if (A == NULL || mat->k == NULL || mat->diagonal == NULL)
+	if (mat->k == NULL || mat->diagonal == NULL)
 	{
 		printf("Error: couldn't allocate memory!\n");
-    if(mat->A != NULL) mat->A->free(mat->A);
     if(mat->k != NULL) free(mat->k);
     if(mat->diagonal != NULL) free(mat->diagonal);
     free(mat);
 		return NULL;
 	}
-
+  for(i = 0; i < size; i++){
+    mat->diagonal[i] = 0.0;
+    I = new_iterator(mat, i);
+    while(I->col < size){
+      if(I->col == i){
+        mat->diagonal[i] -= (double)mat->k[i] * (double)mat->k[i] / (double)M;
+        I->get_next(I);
+      }
+      else{
+        mat->diagonal[i] -= I->get_next(I);
+      }
+    }
+  }
 
   /*
 	mat.cols = (Node**)malloc(size * sizeof(Node*));
@@ -400,44 +423,39 @@ void matrix_free(SparseMatrix* mat)
 
 int matrix_mult_right(SparseMatrix* mat, const double* vector, double* result)
 {
-	int row;
+	int row, col;
   Row_iterator *I;
 
-  for (row = 0; row < mat->n; ++row)
+  for (col = 0; col < mat->n; ++col)
 	{
+		result[col] = 0.0;
+	}
+
+	for (row = 0; row < mat->n; ++row)
+	{
+    I = new_iterator(mat, row);
+    while()
 		result[row] = 0.0;
 	}
 
-	for (row = 0; row < mat->n; ++row)
-	{
-    I = new_iterator(mat, row);
-    if(I == NULL) return 0;
-    while(I->col < mat->n){
-      result[I->col] += I->get_next(I) * vector[row];
-    }
-	}
-  
   return 1;
 }
 
-int matrix_mult_left(const double* vector, SparseMatrix* mat, double* result)
+void matrix_mult_left(const double* vector, SparseMatrix mat, double* result)
 {
-  int row;
-  Row_iterator *I;
+	int row;
+	int col;
 
-	for (row = 0; row < mat->n; ++row)
+	for (col = 0; col < mat.n; ++col)
 	{
-    I = new_iterator(mat, row);
-    if(I == NULL) return 0;
-    result[row] = 0.0;
-    while(I->col < mat->n){
-      result[row] += I->get_next(I) * vector[I->col];
-    }
+		result[col] = 0.0;
+		for (row = 0; row < mat.n; ++row)
+		{
+			result[col] += matrix_get_value(mat, row, col) * vector[row];
+		}
 	}
-  return 1;
 }
 
-/*
 int matrix_to_modularity(SparseMatrix mat)
 {
 	int row;
@@ -465,71 +483,127 @@ int matrix_to_modularity(SparseMatrix mat)
 	}
 
 	return 0;
-}*/
+}
 
-int matrix_modify_submodularity(SparseMatrix* mat)
+int matrix_modify_submodularity(SparseMatrix mat)
 {
 	int row;
 	double rowSum;
 
-  mat->M = 0;
-  for(row = 0; row < n; row++){
-    mat->k[row] = mat->A->rows[row]->size;
-    M += mat->k[row];
-  }
-
-	for (row = 0; row < mat->n; ++row)
+	for (row = 0; row < mat.n; ++row)
 	{
-		mat->diagonal[row] = matrix_sum_row(mat, row);
+		rowSum = matrix_sum_row(mat, row);
+		if (matrix_set_value(mat, row, row, matrix_get_value(mat, row, row) - rowSum) == -1)
+		{
+			printf("Error: couldn't allocate memory!\n");
+			return -1;
+		}
 	}
 
 	return 0;
 }
 
-SparseMatrix* matrix_submatrix(SparseMatrix* mat, const int* indices, int indicesSize)
+SparseMatrix matrix_submatrix(SparseMatrix mat, const int* indices, int indicesSize)
 {
-	SparseMatrix *result;
+	SparseMatrix result;
+	int row;
+	int col;
+	int rowSub = 0;
+	int colSub = 0;
+	int i;
+	int found;
+	double v;
 
 	result = matrix_allocate(indicesSize);
-	if (result == NULL)
+	if (result.n == 0)
 	{
 		printf("Error: couldn't allocate memory!\n");
 		return result;
 	}
 
-  result->A = get_subA(mat->A, indices, indicesSize);
-  matrix_modify_submodularity(result);
+	result.k[0] = 0;
+	for (row = 0; row < mat.n; ++row)
+	{
+		found = 0;
+		for (i = 0; i < indicesSize; ++i)
+		{
+			if (indices[i] == row)
+			{
+				found = 1;
+				break;
+			}
+			else if (indices[i] > row)
+			{
+				break;
+			}
+		}
+		if (!found)
+		{
+			continue;
+		}
+		for (col = 0; col < mat.n; ++col)
+		{
+			found = 0;
+			for (i = 0; i < indicesSize; ++i)
+			{
+				if (indices[i] == col)
+				{
+					found = 1;
+					break;
+				}
+				else if (indices[i] > col)
+				{
+					break;
+				}
+			}
+			if (found)
+			{
+				v = matrix_get_value(mat, row, col);
+				if (matrix_set_value(result, rowSub, colSub, v) == -1)
+				{
+					printf("Error: couldn't allocate memory!\n");
+					matrix_free(&result);
+					return result;
+				}
+				result.k[rowSub] += v;
+				result.M += v;
+				colSub++;
+				if (colSub >= indicesSize)
+				{
+					rowSub++;
+					if (rowSub < indicesSize) result.k[rowSub] = 0;
+					colSub = 0;
+				}
+			}
+		}
+	}
 
 	return result;
 }
 
-double matrix_sum_row(SparseMatrix *mat, int row)
+double matrix_sum_row(SparseMatrix mat, int row)
 {
 	double sum = 0.0;
-	Row_iterator *I;
+	int col;
 
-  I = new_iterator(mat, row);
-  if(I == NULL) printf("???");
-
-	for (; I->col < mat->n;)
+	for (col = 0; col < mat.n; ++col)
 	{
-		sum += I->get_next(I);
+		sum += matrix_get_value(mat, row, col);
 	}
 
 	return sum;
 }
 
-void matrix_print(SparseMatrix* mat)
+void matrix_print(SparseMatrix mat)
 {
 	int row;
-  Row_iterator *I;
+	int col;
 
-	for (row = 0; row < mat->n; ++row)
+	for (row = 0; row < mat.n; ++row)
 	{
-    I = new_iterator(mat, row);
-		for (; I->col < mat->n;)
+		for (col = 0; col < mat.n; ++col)
 		{
-			printf("%1.1f ", I->get_next(I));
+			printf("%1.1f ", matrix_get_value(mat, row, col));
 		}
 		printf("\n");
 	}

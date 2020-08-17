@@ -22,6 +22,19 @@ void graph_row_to_vec(int k, FILE *file, int* target){
 	}
 }
 
+void print_graph(spmat_lists *A){
+  int i;
+  linked_list *curr;
+
+  for(i = 0; i < n; i++){
+    curr = A->rows[i];
+    while(curr != NULL){
+      printf("%d ", *(int*)curr->value);
+    }
+    printf("\n");
+  }
+}
+
 
 
 /*

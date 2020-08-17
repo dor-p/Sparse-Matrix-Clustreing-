@@ -93,3 +93,32 @@ double dot_product(double *v, double *u, int n){
 	}
 	return res;
 }
+
+double get_next_b(Row_iterator *I){
+  int con;
+  double res;
+  con = (I->curr != NULL) && I->col == *(int*)I->curr->value;
+  res = I->B->to_value(I->B, I->row, I->col, con);
+  I->col = I->col + 1;
+  if(I->col >= I->length){
+    free(I);
+  }
+  if(con) I->curr = I->curr->next;
+  return res;
+}
+
+Row_iterator* new_iterator(B_matrix *B, int row){
+  Row_iterator* res;
+  res = (Row_iterator*)malloc(sizeof(Row_iterator));
+  if(res == NULL) return NULL;
+
+  res->curr = B->A->rows[i];
+  res->length = B->n;
+  res->row = row;
+  res->col = 0;
+  res->B = B;
+  res->get_next = get_next_b;
+
+  return res;
+
+}

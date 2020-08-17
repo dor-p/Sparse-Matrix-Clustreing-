@@ -72,5 +72,7 @@ modularity_maximization: helper_functions.o linked_list.o spmat_lists.o b_matrix
 	gcc $(FLAGS) -c modularity_maximization_test.c
 	gcc $(FLAGS) helper_functions.o linked_list.o spmat_lists.o  b_matrix.o modularity_maximization.o modularity_maximization_test.o -o modularity_maximization_test $(LIBS)
 
-
+b_matrix: helper_functions.o linked_list.o spmat_lists.o b_matrix.o read_write_graph.o b_matrix_test.c
+	gcc $(FLAGS) -c b_matrix_test.c
+	gcc $(FLAGS) helper_functions.o linked_list.o spmat_lists.o read_write_graph.o b_matrix.o b_matrix_test.o -o b_matrix_test $(LIBS)
 

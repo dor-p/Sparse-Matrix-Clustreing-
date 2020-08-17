@@ -9,6 +9,7 @@
 #define B_MATRIX_H_
 
 #include "spmat_lists.h"
+#include "linked_list.h"
 
 typedef struct _B_matrix {
 	/*number of rows and columns in the matrix*/
@@ -54,5 +55,30 @@ B_matrix* allocate_B(spmat_lists *A, int *k, int M);
  *returns the dot product of v and u
  */
 double dot_product(double *v, double *u, int n);
+
+typedef struct _row_iterator{
+  /*pointer to next node in adjacency list*/
+  linked_list *curr;
+
+  /*number of nodes in graph g*/
+  int length;
+
+  /**/
+  int row;
+
+  /*current column of iterator*/
+  int col;
+
+  /**/
+  B_matrix *B;
+
+  /*returns the value of the element in B and updates this iterator*/
+  double (*get_next)(struct _row_iterator);
+
+} Row_iterator;
+
+/*return a new iterator over row */
+Row_iterator* new_iterator(B_matrix *B, int row);
+
 
 #endif /* B_MATRIX_H_ */
