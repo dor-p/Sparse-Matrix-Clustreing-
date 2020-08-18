@@ -1,7 +1,6 @@
 
 #include "group_functions.h"
 #include "matrix_functions.h"
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

@@ -153,10 +153,10 @@ double get_next_b(Row_iterator *I){
   con = (I->curr != NULL) && I->col == *(int*)I->curr->value;
   res = (I->B)->to_value(I->B, I->row, I->col, con);
   I->col = I->col + 1;
+  if(con) I->curr = I->curr->next;
   if(I->col >= I->length){
     free(I);
   }
-  if(con) I->curr = I->curr->next;
   return res;
 }
 
@@ -195,13 +195,13 @@ double matrix_1norm(SparseMatrix* mat)
       return -1.0;
     }
 
-		for (col = 0; col < mat->n; ++row)
+		for (col = 0; col < mat->n; ++col)
 		{
 			sums[col] += fabs(I->get_next(I));
 		}
 	}
 
-  for (col = 0; col < mat->n; ++row)
+  for (col = 0; col < mat->n; ++col)
 		{
 			if(sums[col] > largestSum) largestSum = sums[col];
 		}
@@ -241,6 +241,7 @@ int matrix_dominant_eigenpair(SparseMatrix mat, double** eigenVector, double* ei
 			if (fabs(eigenVector2[i] - (*eigenVector)[i]) >= EPS)
 			{
 				ok = 0;
+				break;
 			}
 		}
 
@@ -355,7 +356,7 @@ void matrix_free(SparseMatrix* mat)
 
 int matrix_mult_right(SparseMatrix *mat, const double* vector, double* result)
 {
-	int row;
+	int row, j;
   Row_iterator *I;
 
   for (row = 0; row < mat->n; ++row)
@@ -368,7 +369,8 @@ int matrix_mult_right(SparseMatrix *mat, const double* vector, double* result)
     I = new_iterator(mat, row);
     if(I == NULL) return 0;
     while(I->col < mat->n){
-      result[I->col] += I->get_next(I) * vector[row];
+    	j = I->col;
+    	result[j] += I->get_next(I) * vector[row];
     }
 	}
   
@@ -443,18 +445,13 @@ int matrix_modify_submodularity(SparseMatrix* mat)
   mat->M = 0;
   
   for(row = 0; row < mat->n; row++){
-    mat->k[row] = mat->A->rows[row]->size;
-    mat->M += mat->k[row];
+	  mat->k[row] = (mat->A->rows[row] != NULL) ? mat->A->rows[row]->size : 0;
+	  mat->M += mat->k[row];
   }
  
 	for (row = 0; row < mat->n; ++row)
 	{
-    if(row == 15){
-      printf("mat->k[15] = %d\n", mat->k[15]);
-      printf("mat->A->rows[15]->size = %d\n", mat->A->rows[15]->size);
-    }
 		mat->diagonal[row] = matrix_sum_row(mat, row);
-    printf("matrix_sum_row %d done\n", row);
 	}
 
 	return 0;
