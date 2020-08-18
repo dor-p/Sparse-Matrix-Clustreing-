@@ -9,13 +9,14 @@
 #define SUB_GRAPH_H_
 
 #include "spmat_lists.h"
+#include "b_matrix.h"
 #include "matrix.h"
 
 /*
  * given a graph G (in spmat) and a subset of its indices,
  * return a pointer to the adjacency matrix of the subset
  */
-spmat_lists*  get_subA(spmat_lists* G, int* subset, int sub_size);
+spmat_lists*  get_subA(spmat_lists* G, const int* subset, int sub_size);
 
 /*
  * get B_marix of sub_graph
@@ -24,6 +25,6 @@ spmat_lists*  get_subA(spmat_lists* G, int* subset, int sub_size);
  * to the number i' vertex of the entire graph 
  * (check project instructions page 4 for clarification)
  */
-SparseMatrix* get_hatB_g(spmat_lists* subA, int* subset, SparseMatrix *B);
+B_matrix* get_hatB_g(spmat_lists* subA, int* subset, B_matrix *B);
 
 #endif /* SUB_GRAPH_H_ */

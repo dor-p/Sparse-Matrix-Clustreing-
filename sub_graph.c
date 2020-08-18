@@ -5,7 +5,6 @@
  *      Author: computer
  */
 #include "sub_graph.h"
-#include "b_matrix.h"
 #include <string.h>
 #include <stdlib.h>
 

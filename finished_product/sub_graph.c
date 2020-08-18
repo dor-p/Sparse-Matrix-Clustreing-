@@ -10,7 +10,7 @@
 #include <stdlib.h>
 
 
-spmat_lists*  get_subA(spmat_lists* G, int* subset, int sub_size){
+spmat_lists*  get_subA(spmat_lists* G, const int* subset, int sub_size){
 	spmat_lists* res;
 	linked_list* curr;
 	int i, j, *row;

@@ -162,6 +162,7 @@ double get_next_b(Row_iterator *I){
 
 Row_iterator* new_iterator(SparseMatrix *B, int row){
   Row_iterator* res;
+
   res = (Row_iterator*)malloc(sizeof(Row_iterator));
   if(res == NULL) return NULL;
 
@@ -231,7 +232,7 @@ int matrix_dominant_eigenpair(SparseMatrix mat, double** eigenVector, double* ei
 
 	while (1)
 	{
-		matrix_mult_right(mat, *eigenVector, matEigenVector);
+		matrix_mult_right(&mat, *eigenVector, matEigenVector);
 		magnitudeMatEigenVector = magnitude(matEigenVector, mat.n);
 		ok = 1;
 		for (i = 0; i < mat.n; ++i)
@@ -259,70 +260,24 @@ int matrix_dominant_eigenpair(SparseMatrix mat, double** eigenVector, double* ei
 	return 0;
 }
 
-int matrix_leading_eigenpair(SparseMatrix mat, double** eigenVector, double* eigenValue)
+int matrix_leading_eigenpair(SparseMatrix* mat, double** eigenVector, double* eigenValue)
 {
   double norm;
-  norm = matrix_1norm(&mat);
+  norm = matrix_1norm(mat);
   mat->lambda += norm;
-  if(!matrix_dominant_eigenpair(mat, eigenVector, eigenValue)) return 0;
+  if(!matrix_dominant_eigenpair(*mat, eigenVector, eigenValue)) return 0;
   mat->lambda -= norm;
   *eigenValue = *eigenValue - norm;
 	return 1;
 }
 
-SparseMatrix* matrix_allocate(int size)
-{
-	SparseMatrix* mat;
-	int col, i;
 
-  mat = (SparseMatrix*)malloc(sizeof(SparseMatrix));
-  if(mat == NULL) return NULL;
-
-	mat->A = spmat_lists_allocate(size);
-  mat->n = size;
-	mat->M = 0;
-	mat->k = (int*)malloc(size * sizeof(int));
-  mat->diagonal = (double*)calloc(size, sizeof(double));
-  mat->lambda = 0.0;
-  mat-to_value = matrix_get_value;
-	if (A == NULL || mat->k == NULL || mat->diagonal == NULL)
-	{
-		printf("Error: couldn't allocate memory!\n");
-    if(mat->A != NULL) mat->A->free(mat->A);
-    if(mat->k != NULL) free(mat->k);
-    if(mat->diagonal != NULL) free(mat->diagonal);
-    free(mat);
-		return NULL;
-	}
-
-
-  /*
-	mat.cols = (Node**)malloc(size * sizeof(Node*));
-	if (mat.cols == NULL)
-	{
-		printf("Error: couldn't allocate memory!\n");
-		free(mat.rows);
-		free(mat.k);
-		mat.n = 0;
-		mat.M = 0;
-		mat.k = NULL;
-		mat.rows = NULL;
-		mat.cols = NULL;
-		return mat;
-	}
-	for (col = 0; col < size; ++col)
-	{
-		mat.cols[col] = NULL;
-	}*/
-
-	return mat;
-}
 
 SparseMatrix* matrix_read(const char* filename)
 {
 	FILE* file;
 	SparseMatrix *mat;
-	int value, as, row, n, k, i;
+	int as, n, i;
 
 	file = fopen(filename, "r");
 	if (file == NULL)
@@ -352,14 +307,14 @@ SparseMatrix* matrix_read(const char* filename)
 		{
 			printf("Error: problem while writing from file to mat.A %s!\n", filename);
 			fclose(file);
-      mat->free(mat);
+      matrix_free(mat);
 			return NULL;
 		}
 
   mat->M = 0;
   for(i = 0; i < n; i++){
-    mat->k[i] = A->rows[i]->size;
-    M += mat->k[i];
+    mat->k[i] = mat->A->rows[i]->size;
+    mat->M += mat->k[i];
   }
 
 	fclose(file);
@@ -372,8 +327,8 @@ void matrix_free(SparseMatrix* mat)
   if(mat == NULL) return;
   
   if(mat->A != NULL) mat->A->free(mat->A);
-  if(k != NULL) free(k);
-  if(diagonal != NULL) free(diagonal);
+  if(mat->k != NULL) free(mat->k);
+  if(mat->diagonal != NULL) free(mat->diagonal);
   free(mat);
 /*
 	for (row = 0; row < mat->n; ++row)
@@ -398,7 +353,7 @@ void matrix_free(SparseMatrix* mat)
 	mat->k = NULL;*/
 }
 
-int matrix_mult_right(SparseMatrix* mat, const double* vector, double* result)
+int matrix_mult_right(SparseMatrix *mat, const double* vector, double* result)
 {
 	int row;
   Row_iterator *I;
@@ -420,7 +375,7 @@ int matrix_mult_right(SparseMatrix* mat, const double* vector, double* result)
   return 1;
 }
 
-int matrix_mult_left(const double* vector, SparseMatrix* mat, double* result)
+int matrix_mult_left(const double* vector, SparseMatrix *mat, double* result)
 {
   int row;
   Row_iterator *I;
@@ -467,20 +422,39 @@ int matrix_to_modularity(SparseMatrix mat)
 	return 0;
 }*/
 
+void print_graph(spmat_lists *A){
+  int i;
+  linked_list *curr;
+
+  for(i = 0; i < A->n; i++){
+    curr = A->rows[i];
+    while(curr != NULL){
+      printf("%d ", *(int*)curr->value);
+      curr = curr->next;
+    }
+    printf("\n");
+  }
+}
+
 int matrix_modify_submodularity(SparseMatrix* mat)
 {
 	int row;
-	double rowSum;
 
   mat->M = 0;
-  for(row = 0; row < n; row++){
+  
+  for(row = 0; row < mat->n; row++){
     mat->k[row] = mat->A->rows[row]->size;
-    M += mat->k[row];
+    mat->M += mat->k[row];
   }
-
+ 
 	for (row = 0; row < mat->n; ++row)
 	{
+    if(row == 15){
+      printf("mat->k[15] = %d\n", mat->k[15]);
+      printf("mat->A->rows[15]->size = %d\n", mat->A->rows[15]->size);
+    }
 		mat->diagonal[row] = matrix_sum_row(mat, row);
+    printf("matrix_sum_row %d done\n", row);
 	}
 
 	return 0;
@@ -503,11 +477,58 @@ SparseMatrix* matrix_submatrix(SparseMatrix* mat, const int* indices, int indice
 	return result;
 }
 
+SparseMatrix* matrix_allocate(int size)
+{
+	SparseMatrix* mat;
+
+  mat = (SparseMatrix*)malloc(sizeof(SparseMatrix));
+  if(mat == NULL) return NULL;
+
+	mat->A = spmat_lists_allocate(size);
+  mat->n = size;
+	mat->M = 0;
+	mat->k = (int*)malloc(size * sizeof(int));
+  mat->diagonal = (double*)calloc(size, sizeof(double));
+  mat->lambda = 0.0;
+  mat->to_value = matrix_get_value;
+	if (mat->A == NULL || mat->k == NULL || mat->diagonal == NULL)
+	{
+		printf("Error: couldn't allocate memory!\n");
+    if(mat->A != NULL) mat->A->free(mat->A);
+    if(mat->k != NULL) free(mat->k);
+    if(mat->diagonal != NULL) free(mat->diagonal);
+    free(mat);
+		return NULL;
+	}
+
+
+  /*
+	mat.cols = (Node**)malloc(size * sizeof(Node*));
+	if (mat.cols == NULL)
+	{
+		printf("Error: couldn't allocate memory!\n");
+		free(mat.rows);
+		free(mat.k);
+		mat.n = 0;
+		mat.M = 0;
+		mat.k = NULL;
+		mat.rows = NULL;
+		mat.cols = NULL;
+		return mat;
+	}
+	for (col = 0; col < size; ++col)
+	{
+		mat.cols[col] = NULL;
+	}*/
+
+	return mat;
+}
+
 double matrix_sum_row(SparseMatrix *mat, int row)
 {
 	double sum = 0.0;
 	Row_iterator *I;
-
+  if(row == 15) printf("15");
   I = new_iterator(mat, row);
   if(I == NULL) printf("???");
 

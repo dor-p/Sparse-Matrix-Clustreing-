@@ -48,7 +48,7 @@ int modularity_maximization(SparseMatrix* hatB, double *s){
     return 0;
   }
   memcpy(bestS, s, hatB->n * sizeof(double));
-  matrix_mult_left(s, *hatB, sTempResult);
+  matrix_mult_left(s, hatB, sTempResult);
   memcpy(s, sTempResult, hatB->n * sizeof(double));
   bestM = dot(s, bestS, hatB->n);
 
@@ -61,7 +61,7 @@ int modularity_maximization(SparseMatrix* hatB, double *s){
 
     while(moved < hatB->n){
       for(i = 0; i < hatB->n; i++){
-        delta[i] = 2 * matrix_get_value(*hatB, i, i);
+        delta[i] = 2 * matrix_get_value(hatB, i, i, 0);
       }
 
       for(i = 0; i < hatB->n; i++){
@@ -266,65 +266,67 @@ void group_set_add_group(GroupSet* groupSet, Group* group)
 
 int group_divide(SparseMatrix mat, Group g, Group* g1, Group* g2)
 {
-	SparseMatrix subModularity;
+	SparseMatrix *subModularity;
 	double* eigenVector;
 	double* s;
 	double* v;
 	double eigenValue;
 	int i;
 	Group* group;
-
+  
 	*g1 = group_allocate_capacity(0);
 	*g2 = group_allocate_capacity(0);
-	subModularity = matrix_submatrix(mat, g.indices, g.size);
-	if (subModularity.n == 0)
+	subModularity = matrix_submatrix(&mat, g.indices, g.size);
+
+	if (subModularity->n == 0)
 	{
 		return -1;
 	}
 	if (matrix_modify_submodularity(subModularity) == -1)
 	{
 		printf("Error: couldn't allocate memory!\n");
-		matrix_free(&subModularity);
+		matrix_free(subModularity);
 		return -1;
 	}
-	eigenVector = random_vector(subModularity.n);
+  
+	eigenVector = random_vector(subModularity->n);
 	if (eigenVector == NULL)
 	{
-		matrix_free(&subModularity);
+		matrix_free(subModularity);
 		return -1;
 	}
 	if (matrix_leading_eigenpair(subModularity, &eigenVector, &eigenValue) == -1)
 	{
 		free(eigenVector);
-		matrix_free(&subModularity);
+		matrix_free(subModularity);
 		return -1;
 	}
 	if (eigenValue > 0.0) /*divisible*/
 	{
-		s = (double*)malloc(subModularity.n * sizeof(double));
+		s = (double*)malloc(subModularity->n * sizeof(double));
 		if (s == NULL)
 		{
-			matrix_free(&subModularity);
+			matrix_free(subModularity);
 			free(eigenVector);
 			return -1;
 		}
-		for (i = 0; i < subModularity.n; ++i)
+		for (i = 0; i < subModularity->n; ++i)
 		{
 			s[i] = eigenVector[i] > 0.0 ? 1.0 : -1.0;
 		}
     /*modularity_maximization(&subModularity, s);*/
-		v = (double*)malloc(subModularity.n * sizeof(double));
+		v = (double*)malloc(subModularity->n * sizeof(double));
 		if (v == NULL)
 		{
-			matrix_free(&subModularity);
+			matrix_free(subModularity);
 			free(eigenVector);
 			free(s);
 			return -1;
 		}
 		matrix_mult_left(s, subModularity, v);
-		if (dot(v, s, subModularity.n) > 0.0) /*divisible*/
+		if (dot(v, s, subModularity->n) > 0.0) /*divisible*/
 		{
-			for (i = 0; i < subModularity.n; ++i)
+			for (i = 0; i < subModularity->n; ++i)
 			{
 				if (s[i] > 0.0)
 				{
@@ -337,10 +339,10 @@ int group_divide(SparseMatrix mat, Group g, Group* g1, Group* g2)
 
 				if (group->capacity == 0)
 				{
-					*group = group_allocate_capacity(subModularity.n);
+					*group = group_allocate_capacity(subModularity->n);
 					if (group->indices == NULL)
 					{
-						matrix_free(&subModularity);
+						matrix_free(subModularity);
 						free(eigenVector);
 						free(s);
 						free(v);
@@ -353,6 +355,7 @@ int group_divide(SparseMatrix mat, Group g, Group* g1, Group* g2)
 		}
 	}
 
+  matrix_free(subModularity);
 	return 0;
 }
 

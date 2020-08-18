@@ -2,6 +2,7 @@
 #define MATRIX_FUNCTIONS_H
 
 #include "matrix.h"
+#include <stdlib.h>
 
 /* returns a random vector of size length */
 double* random_vector(int length);
@@ -28,19 +29,20 @@ int matrix_dominant_eigenpair(SparseMatrix mat, double** eigenVector, double* ei
 int matrix_leading_eigenpair(SparseMatrix *mat, double** eigenVector, double* eigenValue);
 
 /* Allocates a new matrix of given size */
-SparseMatrix matrix_allocate(int size);
+/*SparseMatrix* matrix_allocate(int size);*/
+SparseMatrix* matrix_allocate(int size);
 
 /* Reads a matrix from the given file and creates a new matrix from it */
-SparseMatrix matrix_read(const char* filename);
+SparseMatrix* matrix_read(const char* filename);
 
 /* Frees all resources used by mat */
 void matrix_free(SparseMatrix* mat);
 
 /* Multiplies mat by vector from the right (mat*vector), into result (result is pre-allocated) */
-void matrix_mult_right(SparseMatrix *mat, const double* vector, double* result);
+int matrix_mult_right(SparseMatrix *mat, const double* vector, double* result);
 
 /* Multiplies mat by vector from the left (vector*mat), into result (result is pre-allocated) */
-void matrix_mult_left(const double* vector, SparseMatrix *mat, double* result);
+int matrix_mult_left(const double* vector, SparseMatrix *mat, double* result);
 
 /* Converts adjacency matrix into modularity matrix */
 int	matrix_to_modularity(SparseMatrix *mat);
@@ -49,7 +51,7 @@ int	matrix_to_modularity(SparseMatrix *mat);
 int matrix_modify_submodularity(SparseMatrix *mat);
 
 /* Creates a submatrix of mat with only the rows and columns corresponding to the given group of row/column indices */
-SparseMatrix matrix_submatrix(SparseMatrix *mat, const int* indices, int indicesSize);
+SparseMatrix* matrix_submatrix(SparseMatrix *mat, const int* indices, int indicesSize);
 
 /* Sums all the values in the given row of the matrix */
 double matrix_sum_row(SparseMatrix *mat, int row);
