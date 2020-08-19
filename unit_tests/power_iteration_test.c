@@ -18,8 +18,8 @@
 
 
 int main(int argc, char* argv[]){
-  double *s, ev, Mat;
-  int *k, M, n, i, j;
+  double *s, ev, *Mat;
+  int *k, M, n, i, j, con;
   spmat_lists *A;
   B_matrix *B;
   FILE *file;
@@ -40,11 +40,11 @@ int main(int argc, char* argv[]){
   }
   B = allocate_B(A, k, M);
   Mat = (double*)malloc(n * n * sizeof(double));
-  for(i = 0; i < hatB->n; i++){
-      currentNode = hatB->A->rows[i];
-      for(j = 0; j < hatB->n; j++){
+  for(i = 0; i < B->n; i++){
+      currentNode = B->A->rows[i];
+      for(j = 0; j < B->n; j++){
         con = currentNode != NULL && *(int*)currentNode->value == j;
-          Mat[i * n + j] = hatB->to_value(hatB, i, j, con);
+          Mat[i * n + j] = B->to_value(B, i, j, con);
           if(con) currentNode = currentNode->next;
         }
       }

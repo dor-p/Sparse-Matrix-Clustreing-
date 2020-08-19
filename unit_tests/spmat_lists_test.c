@@ -19,24 +19,23 @@ void get_vector(int n, int *v, int is_random, int (*f)(int)){
 }
 
 void multiply_matrix(int n, int *mtrx, int *v, int *target){
-	int i, j, *matrix;
-	matrix = (int (*)[n])mtrx;
+	int i, j;
+
 	for(i = 0; i < n; i++){
 		target[i] = 0;
 		for(j = 0; j < n; j++){
-			target[i] += matrix[i][j] * v[j];
+			target[i] += mtrx[i * n + j] * v[j];
 		}
 	}
 }
 
 
 void create_matrix(int n, int *mtrx){
-	int i, j, ber, *matrix;
-	matrix = (int (*)[n])mtrx;
+	int i, j, ber;
 	for(i = 0; i < n; i++){
 		for(j = 0; j < n; j++){
 			ber = bernuly_test(1, n);
-			matrix[i][j] = ber ? rand() % (n*n) : 0;
+			mtrx[i * n + j] = ber ? rand() % (n*n) : 0;
 		}
 	}
 }

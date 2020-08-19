@@ -12,15 +12,13 @@
 
 
 int multiply_vec_B(B_matrix* B, double* v, double* target){
-	int i, j, con;
-	linked_list* curr;
+	int i, j;
+	Row_iterator* I;
 	for(i = 0; i < B->n; i++){
 		target[i] = 0.0;
-		curr = B->A->rows[i];
+		I = new_iterator(B, i);
 		for(j = 0; j < B->n; j++){
-			con = (curr != NULL && j == *(int*)curr->value);
-			target[i] += B->to_value(B, i, j, con) * v[j];
-			if(con) curr = curr->next;
+			target[i] += I->get_next(I) * v[j];
 		}
 	}
 	return 1;
@@ -28,7 +26,7 @@ int multiply_vec_B(B_matrix* B, double* v, double* target){
 
 double to_value(B_matrix* B, int row, int col, int val){
 	if(row == col) return B->diagonal[row] + B->lambda;
-	return (double)(val ? 1 : 0) - (double)(B->k[row] * B->k[col]) / (double)B->M;
+	return (val ? 1.0 : 0.0) - (double)(B->k[row] * B->k[col]) / (double)B->M;
 }
 
 
@@ -43,8 +41,7 @@ void free_B(B_matrix* B){
 
 
 B_matrix* allocate_B(spmat_lists *A, int *k, int M){
-	int i, j, con;
-	linked_list* curr;
+	int i;
 	B_matrix *res;
 	res = (B_matrix*)malloc(sizeof(B_matrix));
 	if(res == NULL) return NULL;
@@ -54,6 +51,7 @@ B_matrix* allocate_B(spmat_lists *A, int *k, int M){
 	res->M = M;
 	res->A = A;
 	res->lambda = 0.0;
+	res->to_value = to_value;
 
 	res->diagonal = (double*)malloc(res->n * sizeof(double));
 	if(res->diagonal == NULL){
@@ -66,19 +64,11 @@ B_matrix* allocate_B(spmat_lists *A, int *k, int M){
 	 * = - sum(B[i][j] for j in g if j != i)
 	 */
 	for(i = 0; i < res->n; i++){
-		res->diagonal[i] = 0.0;
-		curr = A->rows[i];
-		for(j = 0; j < res->n; j++){
-			if(i == j) continue;
-			con = (curr!= NULL && *(int*)(curr->value) == j);
-			res->diagonal[i] -= to_value(res, i, j, con);
-			if(con) curr = curr->next;
-		}
+		res->diagonal[i] = -(double)(k[i] * k[i]) / (double)M;
 	}
 
 	res->free = free_B;
 	res->multiply_vec = multiply_vec_B;
-	res->to_value = to_value;
 
 	return res;
 }
@@ -100,10 +90,10 @@ double get_next_b(Row_iterator *I){
   con = (I->curr != NULL) && I->col == *(int*)I->curr->value;
   res = I->B->to_value(I->B, I->row, I->col, con);
   I->col = I->col + 1;
+  if(con) I->curr = I->curr->next;
   if(I->col >= I->length){
     free(I);
   }
-  if(con) I->curr = I->curr->next;
   return res;
 }
 
@@ -112,7 +102,7 @@ Row_iterator* new_iterator(B_matrix *B, int row){
   res = (Row_iterator*)malloc(sizeof(Row_iterator));
   if(res == NULL) return NULL;
 
-  res->curr = B->A->rows[i];
+  res->curr = B->A->rows[row];
   res->length = B->n;
   res->row = row;
   res->col = 0;

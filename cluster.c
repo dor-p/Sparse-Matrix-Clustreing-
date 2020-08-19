@@ -33,12 +33,14 @@ void group_print(int* group, int n)
 void group_set_print(set_of_sets *groupSet, int n)
 {
 	int i, k, *vec;
-  vec = (int*)malloc(n * sizeof(int));
-	for (i = 0; i < groupSet->N; ++i)
-	{
-    k = groupSet->sizeof_next;
-		groupSet->pop(groupSet, vec);
-    group_print(vec, k);
+	linked_list* curr;
+	vec = (int*)malloc(n * sizeof(int));
+	curr = groupSet->sets;
+	for (i = 0; i < groupSet->N; i++){
+		k = ((int_set*)curr->value)->size;
+		memcpy(vec, ((int_set*)curr->value)->values, k * sizeof(int));
+		group_print(vec, k);
+		curr = curr->next;
 	}
 		printf("\n");
     free(vec);
@@ -72,23 +74,25 @@ void split_group(B_matrix* hatB, double *eigen_value, double *s){
  * this function puts the values of group into g1, g2 and than
  * puts g1, g2 into P or O depending on size
  */
-void groups_to_res(set_of_sets* P, set_of_sets* O, double *s,
+int groups_to_res(set_of_sets* P, set_of_sets* O, double *s,
 										int *group, int size){
-	int g1, g2, i;
+	int g1, g2, i, *group2;
+
+	group2 = (int*)malloc(size * sizeof(int));
+	if(group2 == NULL) return 0;
 
 	g1 = 0;
 	g2 = 0;
-	for(i = 0; i < size; ){
+	for(i = 0; i < size; i++){
 		if(s[i] > 0.0){
+			group[g1] = group[i];
 			g1++;
-			i++;
 		}
 		else{
-			if(i + g2 >= size) break;
-			swap_int(group + i, group + size - 1 - g2);
+			group2[g2] = group[i];
 			g2++;
-			}
 		}
+	}
 
 	if(g1 * g2 == 0) O->add(O, group, size);
 	else{
@@ -99,12 +103,14 @@ void groups_to_res(set_of_sets* P, set_of_sets* O, double *s,
 			P->add(P, group, g1);
 		}
 		if(g2 == 1){
-			O->add(O, group + size - 1, 1);
+			O->add(O, group2, 1);
 		}
 		else{
-			P->add(P, group + g1, g2);
+			P->add(P, group2, g2);
 		}
 	}
+	free(group2);
+	return 1;
 }
 
 /*
@@ -127,7 +133,7 @@ int init_parse(int **curr, double **s1, double **s2, int size,
 
 	M = 0;
 	for(i = 0; i < size; i++){
-		k[i] = A->rows[i]->size;
+		k[i] = A->rows[i] != NULL ? A->rows[i]->size : 0;
 		M += k[i];
 	}
 

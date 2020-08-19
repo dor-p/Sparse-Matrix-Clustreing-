@@ -8,6 +8,7 @@
 #include "norm_1.h"
 #include "spmat_lists.h"
 #include <stdio.h>
+#include <math.h>
 
 double norm_1_arrays(int n, double A[][n]){
 	int i,j;
@@ -23,8 +24,8 @@ double norm_1_arrays(int n, double A[][n]){
 	return res;
 }
 
-
+/*
 double norm_1_test(int n, double A[][n]){
 
 	return 0.0;
-}
+}*/

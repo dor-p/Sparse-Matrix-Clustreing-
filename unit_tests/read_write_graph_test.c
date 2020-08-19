@@ -26,7 +26,7 @@ void print_graph(spmat_lists *A){
   int i;
   linked_list *curr;
 
-  for(i = 0; i < n; i++){
+  for(i = 0; i < A->n; i++){
     curr = A->rows[i];
     while(curr != NULL){
       printf("%d ", *(int*)curr->value);

@@ -73,7 +73,7 @@ typedef struct _row_iterator{
   B_matrix *B;
 
   /*returns the value of the element in B and updates this iterator*/
-  double (*get_next)(struct _row_iterator);
+  double (*get_next)(struct _row_iterator *I);
 
 } Row_iterator;
 

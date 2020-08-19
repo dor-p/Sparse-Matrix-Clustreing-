@@ -17,22 +17,20 @@
  *calculates the norm_1 of B
  */
 double norm_1(B_matrix* B){
-	int i, j, con;
+	int i, j;
 	double res;
-	linked_list *curr;
+	Row_iterator *I;
 	double *column_sums = (double*)calloc(B->n, sizeof(double));
 	if(column_sums == NULL){
 		free(column_sums);
-		return -1.0;
+		return 0;
 	}
 	/*note that at this point column_sums has all 0 because calloc makes it so*/
 	for(i = 0; i < B->n; i++){
-		curr = B->A->rows[i];
+		I = new_iterator(B, i);
 		/*this assumes that the matrix rows are sorted*/
 		for(j = 0; j < B->n; j++){
-			con = (curr != NULL) && (*(int*)(curr->value) == j);
-			column_sums[j] += fabs(B->to_value(B, i, j, con));
-			if(con) curr = curr->next;
+			column_sums[j] += fabs(I->get_next(I));
 		}
 	}
 	res = 0.0;

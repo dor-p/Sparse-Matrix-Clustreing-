@@ -27,7 +27,7 @@ int allocate_MM_vectors(double **bestS, double **delta,
 	    return 0;
 	}
 
-	hasMoved = (int*)malloc(n * sizeof(int));
+	*hasMoved = (int*)malloc(n * sizeof(int));
 	if(delta == NULL){
 	    free(bestS);
 	    free(stag);
@@ -40,7 +40,7 @@ int allocate_MM_vectors(double **bestS, double **delta,
 
 
 int modularity_maximization(B_matrix* hatB, double *s){
-  double bk, M, bestM, *bestS, *delta, *stag;
+  double M, bestM, *bestS, *delta, *stag;
   int i, j, k, con, changed, moved, *hasMoved;
   linked_list *currentNode;
 
