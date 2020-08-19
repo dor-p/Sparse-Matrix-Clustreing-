@@ -1,6 +1,7 @@
 
 #include "group_functions.h"
 #include "matrix_functions.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -313,7 +314,7 @@ int group_divide(SparseMatrix mat, Group g, Group* g1, Group* g2)
 		{
 			s[i] = eigenVector[i] > 0.0 ? 1.0 : -1.0;
 		}
-    /*modularity_maximization(&subModularity, s);*/
+		/*modularity_maximization(&subModularity, s);*/
 		v = (double*)malloc(subModularity->n * sizeof(double));
 		if (v == NULL)
 		{

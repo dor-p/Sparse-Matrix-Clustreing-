@@ -13,6 +13,22 @@
 
 #define EPS 0.00001
 
+void print_graph(spmat_lists *A){
+  int i;
+  linked_list *curr;
+
+  for(i = 0; i < A->n; i++){
+    curr = A->rows[i];
+    while(curr != NULL){
+      printf("%d ", *(int*)curr->value);
+      curr = curr->next;
+    }
+    printf("\n");
+  }
+}
+
+
+
 double* random_vector(int length)
 {
 	int i;
@@ -213,9 +229,10 @@ int matrix_dominant_eigenpair(SparseMatrix mat, double** eigenVector, double* ei
 	double* eigenVector2;
 	double* matEigenVector;
 	double magnitudeMatEigenVector;
-	int i;
+	int i, iter;
 	int ok;
 
+	/*print_graph(mat.A);*/
 	matEigenVector = (double*)malloc(mat.n * sizeof(double));
 	if (matEigenVector == NULL)
 	{
@@ -229,9 +246,10 @@ int matrix_dominant_eigenpair(SparseMatrix mat, double** eigenVector, double* ei
 		free(matEigenVector);
 		return -1;
 	}
-
+	iter = 0;
 	while (1)
 	{
+		iter++;
 		matrix_mult_right(&mat, *eigenVector, matEigenVector);
 		magnitudeMatEigenVector = magnitude(matEigenVector, mat.n);
 		ok = 1;
@@ -241,7 +259,6 @@ int matrix_dominant_eigenpair(SparseMatrix mat, double** eigenVector, double* ei
 			if (fabs(eigenVector2[i] - (*eigenVector)[i]) >= EPS)
 			{
 				ok = 0;
-				break;
 			}
 		}
 
@@ -359,18 +376,14 @@ int matrix_mult_right(SparseMatrix *mat, const double* vector, double* result)
 	int row, j;
   Row_iterator *I;
 
-  for (row = 0; row < mat->n; ++row)
-	{
-		result[row] = 0.0;
-	}
-
 	for (row = 0; row < mat->n; ++row)
 	{
+		result[row] = 0.0;
     I = new_iterator(mat, row);
     if(I == NULL) return 0;
     while(I->col < mat->n){
     	j = I->col;
-    	result[j] += I->get_next(I) * vector[row];
+    	result[row] += I->get_next(I) * vector[j];
     }
 	}
   
@@ -382,14 +395,14 @@ int matrix_mult_left(const double* vector, SparseMatrix *mat, double* result)
   int row;
   Row_iterator *I;
 
+  memset(result, 0, mat->n * sizeof(double));
 	for (row = 0; row < mat->n; ++row)
 	{
-    I = new_iterator(mat, row);
-    if(I == NULL) return 0;
-    result[row] = 0.0;
-    while(I->col < mat->n){
-      result[row] += I->get_next(I) * vector[I->col];
-    }
+		I = new_iterator(mat, row);
+		if(I == NULL) return 0;
+		while(I->col < mat->n){
+			result[I->col] += I->get_next(I) * vector[row];
+		}
 	}
   return 1;
 }
@@ -423,20 +436,6 @@ int matrix_to_modularity(SparseMatrix mat)
 
 	return 0;
 }*/
-
-void print_graph(spmat_lists *A){
-  int i;
-  linked_list *curr;
-
-  for(i = 0; i < A->n; i++){
-    curr = A->rows[i];
-    while(curr != NULL){
-      printf("%d ", *(int*)curr->value);
-      curr = curr->next;
-    }
-    printf("\n");
-  }
-}
 
 int matrix_modify_submodularity(SparseMatrix* mat)
 {

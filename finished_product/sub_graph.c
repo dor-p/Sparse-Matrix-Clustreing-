@@ -23,14 +23,31 @@ spmat_lists*  get_subA(spmat_lists* G, const int* subset, int sub_size){
 		free(row);
 		return NULL;
 	}
+	/*
+	 * Goal:
+	 * we need to check for all i,j in subset, what is A[i][j]
+	 * Problem: how do we do this eficiantly?
+	 * We want to iterate over A once!
+	 * we'll have two values to look at in every point in time:
+	 * 1. curr - the next neighbor in A of i
+	 * 2. j the next elemnt in subset.
+	 *
+	 * compare curr->value to j
+	 * if curr->value = j: sub_A = 1
+	 * if curr->value > j: sub_A = 0 and indent j
+	 * if curr->value < j: indent curr
+	 */
 
 	for(i = 0; i < sub_size; i++){
 		curr = G->rows[subset[i]];
 		memset(row, 0, sub_size * sizeof(int));
 		for(j = 0; j < sub_size; j++){
-			row[j] = (curr != NULL && *(int*)curr->value == j) ? 1 : 0;
-			if(curr == NULL) continue;
-			if(*(int*)curr->value == j) curr = curr->next;
+			if(curr == NULL) break;
+			while(curr != NULL && *(int*)curr->value < subset[j]) curr = curr->next;
+			if(curr != NULL && *(int*)curr->value == subset[j]){
+				row[j] = 1;
+				curr = curr->next;
+			}
 		}
 		res->add_row(res, row, i);
 	}

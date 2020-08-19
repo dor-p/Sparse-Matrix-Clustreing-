@@ -59,6 +59,8 @@ void* ecxtract_first_LL(linked_list **lst){
 void free_LL(linked_list *lst){
 	free(lst->value);
 	if(lst->next != NULL) free_LL(lst->next);
+	lst->value = NULL;
+	lst->next = NULL;
 	free(lst);
 }
 
