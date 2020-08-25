@@ -191,7 +191,7 @@ int parse_clusters(set_of_sets* P, set_of_sets* O, spmat_lists* A){
 
 		split_group(hatB, &eigen_value, s1);
 
-		/*modularity_maximization(hatB, s1);*/
+		modularity_maximization(hatB, s1);
 
 		hatB->multiply_vec(hatB, s1, s2);
 
