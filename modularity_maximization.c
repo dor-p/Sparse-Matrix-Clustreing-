@@ -3,6 +3,7 @@
 #include "modularity_maximization.h"
 #include "b_matrix.h"
 #include "linked_list.h"
+#include "power_iteration.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -87,7 +88,7 @@ int modularity_maximization(B_matrix* hatB, double *s){
       moved++;
       hasMoved[k] = 1;
 
-      if(M > bestM){
+      if(IS_POSITIVE(M > bestM)){
         bestM = M;
         memcpy(bestS, stag, hatB->n * sizeof(double));
       }
