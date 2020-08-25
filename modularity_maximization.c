@@ -88,7 +88,7 @@ int modularity_maximization(B_matrix* hatB, double *s){
       moved++;
       hasMoved[k] = 1;
 
-      if(IS_POSITIVE(M > bestM)){
+      if(IS_POSITIVE(M - bestM)){
         bestM = M;
         memcpy(bestS, stag, hatB->n * sizeof(double));
       }
