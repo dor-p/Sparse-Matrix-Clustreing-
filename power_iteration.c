@@ -17,6 +17,7 @@ double* getRandomVector(int length)
 	for (i = 0; i < length; ++i)
 	{
 		vector[i] = rand();
+    while(vector[i] == 0) vector[i] = rand();
 	}
 
 	return vector;
@@ -79,6 +80,18 @@ int power_iteration(B_matrix *mat,double *eigenValue ,double *s){
     if(eigenVector2 != NULL) free(eigenVector);
     return 0;
   }
+
+  ok = 1;
+  while(ok){
+    mat->multiply_vec(mat, eigenVector, matEigenVector);
+    for(i = 0; i < mat->n; i++){
+      if(matEigenVector[i]){
+        ok = 0;
+        break;
+        }
+      }
+    }
+
   /*print_B(mat);*/
   while (1)
     {

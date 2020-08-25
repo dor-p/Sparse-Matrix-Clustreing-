@@ -44,7 +44,7 @@ B_matrix* allocate_B(spmat_lists *A, int *k, int M){
 	int i;
 	B_matrix *res;
 	res = (B_matrix*)malloc(sizeof(B_matrix));
-	if(res == NULL) return NULL;
+	if(res == NULL || M == 0) return NULL;
 
 	res->n = A->n;
 	res->k = k;

@@ -147,12 +147,29 @@ int init_parse(int **curr, double **s1, double **s2, int size,
 	return 1;
 }
 
+/**/
+int empty_graph(set_of_sets* P, set_of_sets* O, spmat_lists* A){
+  int i, *curr;
+  for(i = 0; i < A->n; i++){
+    if(A->rows[i] != NULL && A->rows[i]->size > 0) return 0;
+  }
+  curr = (int*)malloc(A->n * sizeof(int));
+  if(curr == NULL) return -1;
+  if(!P->pop(P, curr)){
+			free(curr);
+			return -1;
+		}
+  O->add(O, curr, A->n);
+  free(curr);
+  return 1;
+}
+
 /*
  * this function implements the algorithm
  * given P = {{1,...,n}}, O = {} and A represents the graph
  */
 int parse_clusters(set_of_sets* P, set_of_sets* O, spmat_lists* A){
-	int size, *curr;
+	int size, *curr, ok;
 	double eigen_value;
 	double *s1, *s2;
 	B_matrix *hatB, *B;
@@ -162,6 +179,10 @@ int parse_clusters(set_of_sets* P, set_of_sets* O, spmat_lists* A){
   /*printf("size = %d", size);*/
 	if(!init_parse(&curr, &s1, &s2, size, A, &B)) return 0;
   /*printf("size = %d", size);*/
+  ok = empty_graph(P, O, A);
+  if(ok < 0) return 0;
+  if(ok > 0) return 1;
+
 	while(size > 0){
     /*printf("P = %p, curr = %p", (void*)P, (void*)curr);*/
 		if(!P->pop(P, curr)){
