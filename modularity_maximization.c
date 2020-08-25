@@ -47,7 +47,7 @@ int modularity_maximization(B_matrix* hatB, double *s){
 
   if(!allocate_MM_vectors(&bestS, &delta, &stag, &hasMoved, hatB->n)) return 0;
 
-  memcpy(bestS, s, hatB->n);
+  memcpy(bestS, s, hatB->n * sizeof(double));
   hatB->multiply_vec(hatB, bestS, s);
   bestM = 0.5 * dot_product(s, bestS, hatB->n);
 
