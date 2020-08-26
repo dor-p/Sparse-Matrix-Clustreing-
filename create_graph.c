@@ -33,7 +33,7 @@ int bernuly(int p, int q){
 
 /*
  * input: size of graph, name of output file, (optional) number of clusters 
- *
+ */
 int main(int argc, char* argv[]){
 	int n, k, is_out, i, j, deg;
 	int *adj;
@@ -43,6 +43,9 @@ int main(int argc, char* argv[]){
 	n = string_to_int(argv[1]);
 	file = fopen(argv[2], "w");
 	fwrite(&n, sizeof(int), 1, file);
+
+  n -= 2;
+
     adj = (int*)calloc(n * n, sizeof(int));
 	if(argc > 3){
 		k = string_to_int(argv[3]);
@@ -78,8 +81,11 @@ int main(int argc, char* argv[]){
             }
         }
     }
-    free(adj);
+    n = 0;
+    fwrite(&n, sizeof(int), 1, file);
+    fwrite(&n, sizeof(int), 1, file);
+  free(adj);
 	fclose(file);
 	return 0;
-}*/
+}
 
