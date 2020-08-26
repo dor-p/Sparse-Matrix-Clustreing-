@@ -18,33 +18,6 @@
 #include <math.h>
 #include <string.h>
 
-/* added two print functions*/
-void group_print(int* group, int n)
-{
-	int i;
-
-	for (i = 0; i < n; ++i)
-	{
-		printf("%d ", group[i]);
-	}
-    printf("\n");
-}
-
-void group_set_print(set_of_sets *groupSet, int n)
-{
-	int i, k, *vec;
-	linked_list* curr;
-	vec = (int*)malloc(n * sizeof(int));
-	curr = groupSet->sets;
-	for (i = 0; i < groupSet->N; i++){
-		k = ((int_set*)curr->value)->size;
-		memcpy(vec, ((int_set*)curr->value)->values, k * sizeof(int));
-		group_print(vec, k);
-		curr = curr->next;
-	}
-		printf("\n");
-    free(vec);
-}
 
 /*
  * swap the values for two given pointers
@@ -270,8 +243,6 @@ int main(int argc, char* argv[]){
 	file = fopen(argv[2], "w");
 	if(file == NULL) main_error("Opening file for writing has failed");
   
-  group_set_print(O, n);
-
 	if(!write_sets(file, O)) main_error("Writing O has failed");
 	fclose(file);
 
